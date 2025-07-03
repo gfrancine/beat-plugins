@@ -1,0 +1,301 @@
+@use "tailwind-colors" as *;
+
+/* Variables */
+
+$size-space: 0.4rem;
+$size-corner: 0.2rem;
+$size-border: 1.2pt;
+$size-input: 2.2rem;
+
+.app[data-theme="dark"] {
+  --bg: #{$tw-neutral-900};
+  --fg: #{$tw-neutral-100};
+  --fg-secondary: #{$tw-neutral-500};
+  --accent: #{$tw-blue-500};
+  --border: #{$tw-neutral-600};
+  --elevated-bg: #{$tw-neutral-800};
+  --elevated-fg: #{$tw-neutral-100};
+  --elevated-fg-secondary: #{$tw-neutral-400};
+  --elevated-fg-placeholder: #{$tw-neutral-500};
+  --button-bg: #{$tw-blue-500};
+  --button-bg-hover: #{$tw-blue-600};
+  --button-fg: white;
+  --button-secondary-bg: #{$tw-neutral-700};
+  --button-secondary-bg-hover: #{$tw-neutral-600};
+  --button-secondary-fg: #{$tw-neutral-100};
+}
+
+.app[data-theme="light"] {
+  --bg: #{$tw-neutral-100};
+  --fg: #{$tw-neutral-950};
+  --fg-secondary: #{$tw-neutral-500};
+  --accent: #{$tw-blue-500};
+  --border: #{$tw-neutral-300};
+  --elevated-bg: #{$tw-neutral-050};
+  --elevated-fg: #{$tw-neutral-950};
+  --elevated-fg-secondary: #{$tw-neutral-600};
+  --elevated-fg-placeholder: #{$tw-neutral-500};
+  --button-bg: #{$tw-blue-500};
+  --button-bg-hover: #{$tw-blue-400};
+  --button-fg: white;
+  --button-secondary-bg: #{$tw-neutral-300};
+  --button-secondary-bg-hover: #{$tw-neutral-400};
+  --button-secondary-fg: #{$tw-neutral-950};
+}
+
+$border: solid $size-border var(--border);
+$border-accent: solid $size-border var(--accent);
+
+/* Components */
+
+@mixin inherit-typography {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+@mixin button-base {
+  border-radius: $size-corner;
+  border: 0;
+  padding: $size-space;
+  cursor: pointer;
+  user-select: none;
+  height: $size-input;
+  width: $size-input;
+
+  &:focus {
+    outline: none;
+  }
+
+  .icon {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.button-primary {
+  @include button-base;
+  background: var(--button-bg);
+  color: var(--button-fg);
+
+  &:hover {
+    background: var(--button-bg-hover);
+  }
+
+  &:focus {
+    outline: $border-accent;
+  }
+
+  .icon {
+    fill: var(--button-fg, #fff);
+  }
+}
+
+.button-secondary {
+  @include button-base;
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+
+  &:hover {
+    background: var(--button-secondary-bg-hover);
+  }
+
+  &:focus {
+    outline: $border-accent;
+  }
+
+  .icon {
+    fill: var(--button-secondary-fg);
+  }
+}
+
+.button-transparent {
+  @include button-base;
+  background: transparent;
+
+  &:hover {
+    opacity: 80%;
+  }
+}
+
+/* App */
+
+:root,
+#root,
+body {
+  font-size: 9pt;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.app {
+  color: var(--fg);
+  background-color: var(--bg);
+  height: 100%;
+  font-family: sans-serif;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .header {
+    padding: $size-space;
+
+    .title {
+      font-size: larger;
+      margin: $size-space 0;
+      user-select: none;
+    }
+
+    .toolbar {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: $size-space;
+
+      input,
+      button {
+        padding: $size-space;
+        @include inherit-typography;
+      }
+
+      input {
+        background-color: var(--elevated-bg);
+        height: $size-input;
+
+        &::placeholder {
+          color: var(--elevated-fg-placeholder);
+        }
+      }
+
+      .search {
+        flex: 1;
+        border-radius: $size-corner;
+        border: $border;
+
+        &:focus {
+          outline: $border-accent;
+        }
+      }
+    }
+  }
+
+  .notes {
+    flex: 1;
+    padding: $size-space;
+    overflow-x: hidden;
+
+    .placeholder {
+      user-select: none;
+      display: flex;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10%;
+      font-size: larger;
+      color: var(--fg-secondary);
+    }
+
+    .note-dnd-list {
+      height: 100%;
+    }
+
+    .note-dnd-item {
+      padding: calc($size-space/2) 0;
+      background: transparent;
+
+      &.above {
+        border-top: solid calc($size-border/2) var(--accent);
+      }
+      &.under {
+        border-bottom: solid calc($size-border/2) var(--accent);
+      }
+
+      &:first-child.above {
+        border-top: $border-accent;
+      }
+      &:last-child.under {
+        border-bottom: $border-accent;
+      }
+
+      .note {
+        // border-radius: $size-corner;
+        // background: var(--elevated-bg);
+        position: relative;
+        user-select: none;
+        cursor: pointer;
+
+        /* &:hover {
+          opacity: 70%;
+        } */
+
+        .note-topbar {
+          display: flex;
+          flex-direction: row;
+          position: absolute;
+          width: fit-content;
+          right: $size-space;
+          top: $size-space;
+          opacity: 0;
+
+          button {
+            height: $size-input;
+            width: $size-input;
+
+            .icon {
+              width: 100%;
+              height: 100%;
+              fill: var(--elevated-fg);
+            }
+          }
+        }
+
+        &:hover .note-topbar {
+          opacity: 1;
+        }
+
+        textarea {
+          @include inherit-typography;
+
+          width: 100%;
+          min-height: 8.5em;
+          height: 8.5em;
+          border-radius: $size-corner;
+          resize: none;
+          color: var(--elevated-fg-secondary);
+          background: var(--elevated-bg);
+          padding: $size-space * 1.5;
+          border: $border;
+          overflow-y: hidden;
+          user-select: none;
+          cursor: inherit;
+
+          &::placeholder {
+            color: var(--elevated-fg-placeholder);
+          }
+
+          &:focus {
+            outline: $border-accent;
+          }
+
+          &.editing {
+            color: var(--elevated-fg);
+            height: 40em;
+            font-size: 9.5pt;
+            overflow-y: auto;
+            user-select: all;
+            resize: vertical;
+            cursor: text;
+          }
+        }
+      }
+    }
+  }
+}
