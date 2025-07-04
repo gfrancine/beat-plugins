@@ -1,5 +1,9 @@
 {
   "scripts": {
     "fmt-all": "prettier -w --ignore-path=.gitignore ."
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "prettier": "^3.6.2"
   }
 }

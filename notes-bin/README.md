@@ -15,7 +15,7 @@ npm i
 # Develop just the front-end UI
 npm run dev-ui
 
-# Build the plugin and install it in Beat
+# Develop the plugin in Beat with file watching
 npm run dev
 
 # Build just the plugin without installing

@@ -1,8 +1,9 @@
 {
   "scripts": {
     "build": "node scripts/build.js 'dist/Notes Bin.beatPlugin' prod",
-    "dev-ui": "node scripts/build.js dist dev && serve dist --no-clipboard",
-    "dev": "npm run build && install-plugin 'dist/Notes Bin.beatPlugin'"
+    "refresh": "npm run build && install-plugin 'dist/Notes Bin.beatPlugin'",
+    "dev": "npm run refresh && chokidar \"ui/**\" \"plugin/**\" -c 'npm run refresh'",
+    "dev-ui": "node scripts/build.js dist dev && serve dist --no-clipboard"
   },
   "devDependencies": {
     "@types/react": "^18.0.4",
