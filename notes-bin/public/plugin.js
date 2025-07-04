@@ -1,10 +1,19 @@
 /*
 
 Plugin name: Notes Bin
-Description: Tidies up all (CONT'D)'s in a screenplay.
-
 Version: 0.1.0
 Copyright: 2025 gfrancine
+Image: Notes Bin.jpg
+
+<Description>
+  <p>A Highland 2-like container for storing and organizing your notes in snippets.</p>
+  <h2>Features</h2>
+  <ul>
+    <li>Drag and drop text from anywhere to create notes or drag notes out of the bin</li>
+    <li>Import and export to text (.txt) files</li>
+    <li>Text search</li>
+  </ul>
+</Description>
 
 */
 
