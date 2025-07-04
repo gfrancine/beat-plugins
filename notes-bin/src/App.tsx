@@ -14,6 +14,7 @@ import {
   ExportIcon,
   ImportIcon,
 } from "./Icons";
+import { useDebouncedCallback } from "use-debounce";
 
 const NoteDndContext = createContext<{
   targetIndex: null | number;
@@ -208,6 +209,18 @@ function Note({
     }
   }, [isEditing]);
 
+  const saveNote = () => {
+    const newNote = { ...note };
+    newNote.contents = internalContents;
+    handleNoteSave(newNote);
+  };
+
+  // https://github.com/xnimorz/use-debounce?tab=readme-ov-file#debounced-callbacks
+  // save the note on type
+  const debouncedSaveNote = useDebouncedCallback(saveNote, 500, {
+    trailing: true,
+  });
+
   return hidden ? (
     <></>
   ) : (
@@ -243,12 +256,13 @@ function Note({
           className={isEditing ? "editing" : ""}
           value={internalContents}
           readOnly={!isEditing}
-          onChange={(e) => setInternalContent(e.target.value)}
+          onChange={(e) => {
+            setInternalContent(e.target.value);
+            debouncedSaveNote();
+          }}
           placeholder="Note..."
           onBlur={() => {
-            const newNote = { ...note };
-            newNote.contents = internalContents;
-            handleNoteSave(newNote);
+            saveNote();
             setIsEditing(false);
           }}
         />
