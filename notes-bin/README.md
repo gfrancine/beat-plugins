@@ -12,11 +12,11 @@ Drag and drop your notes in a container.
 # Install all dependencies
 npm i
 
-# Develop just the front-end UI
-npm run dev-ui
-
 # Develop the plugin in Beat with file watching
 npm run dev
+
+# Develop just the front-end UI
+npm run dev-ui
 
 # Build just the plugin without installing
 npm run build
