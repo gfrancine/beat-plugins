@@ -42,8 +42,8 @@ function NoteDndItem({
     noteDndCtx.targetIndex === index
       ? "above"
       : noteDndCtx.targetIndex === index + 1
-      ? "under"
-      : "";
+        ? "under"
+        : "";
 
   return (
     <div
@@ -116,7 +116,7 @@ function NoteDndList({
               const rect = dndItemElement.getBoundingClientRect();
               if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
                 const noteIndex = Number(
-                  dndItemElement.getAttribute("data-note-index")
+                  dndItemElement.getAttribute("data-note-index"),
                 );
                 if (e.clientY > rect.y + rect.height) {
                   setTargetIndex(noteIndex + 1);
@@ -133,7 +133,7 @@ function NoteDndList({
             if (lastDndItem) {
               const rect = lastDndItem.getBoundingClientRect();
               const noteIndex = Number(
-                lastDndItem.getAttribute("data-note-index")
+                lastDndItem.getAttribute("data-note-index"),
               );
               if (e.clientY > rect.y + rect.height / 2) {
                 setTargetIndex(noteIndex + 1);

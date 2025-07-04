@@ -50,7 +50,7 @@ function renderApp(bin: Bin) {
           return { success: true, bin: DEFAULT_BIN };
         }}
       */}
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }
 

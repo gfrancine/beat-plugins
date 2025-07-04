@@ -9,7 +9,7 @@ const process = require("process");
 
 const PLUGINS_DIR = path.join(
   os.homedir(),
-  "/Library/Containers/fi.KAPITAN.Beat/Data/Library/Application Support/Beat/Plugins"
+  "/Library/Containers/fi.KAPITAN.Beat/Data/Library/Application Support/Beat/Plugins",
 );
 const HELP = "USAGE: <plugin dir>";
 

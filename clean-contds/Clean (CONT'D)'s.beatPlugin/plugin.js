@@ -16,7 +16,7 @@ const promptResult = Beat.dropdownPrompt(
   In non-strict mode, existing (CONT'D)'s are respected and simply formatted.
 
   To tidy up only a few lines, select the text in the editor.`,
-  ["Strict (check all CONT'Ds)", "Non-strict (respect existing CONT'Ds)"]
+  ["Strict (check all CONT'Ds)", "Non-strict (respect existing CONT'Ds)"],
 );
 
 if (promptResult) {
@@ -158,7 +158,7 @@ if (promptResult) {
       Beat.replaceRange(
         characterLine.line.position,
         characterLine.line.string.length,
-        characterLine.newString
+        characterLine.newString,
       );
     }
   }
