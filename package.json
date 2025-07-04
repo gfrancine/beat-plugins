@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "fmt-all": "prettier -w --ignore-path=.gitignore ."
+  }
+}
