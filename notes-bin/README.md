@@ -12,13 +12,12 @@ Drag and drop your notes in a container.
 # Install all dependencies
 npm i
 
-# Develop the front-end UI
+# Develop just the front-end UI
+npm run dev-ui
+
+# Build the plugin and install it in Beat
 npm run dev
 
-# Build the plugin
-npm run build-plugin
-
-# Formatting (prettier required)
-npm i -g prettier
-npm run fmt
+# Build just the plugin without installing
+npm run build
 ```

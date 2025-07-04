@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "node scripts/build.js dist dev && serve dist --no-clipboard",
-    "build-plugin": "node scripts/build.js 'dist/Notes Bin.beatPlugin' prod",
-    "fmt": "prettier -w . --ignore-path .gitignore"
+    "build": "node scripts/build.js 'dist/Notes Bin.beatPlugin' prod",
+    "dev-ui": "node scripts/build.js dist dev && serve dist --no-clipboard",
+    "dev": "npm run build && install-plugin 'dist/Notes Bin.beatPlugin'"
   },
   "devDependencies": {
     "@types/react": "^18.0.4",
@@ -10,6 +10,7 @@
     "esbuild": "^0.25.5",
     "esbuild-plugin-alias": "^0.2.1",
     "esbuild-sass-plugin": "^3.3.1",
+    "install-plugin": "file:../install-plugin",
     "serve": "^14.2.4",
     "shelljs": "^0.10.0"
   },
