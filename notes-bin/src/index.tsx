@@ -10,12 +10,10 @@ const APP_VERSION = "0.1.0";
 // Bundle-safe namespace, for functions called from the plugin-side with runJS
 (window as any).PluginGlobals = {};
 
-function promisifyCallback<T extends any[], U>(
-  callback: (...args: T) => U,
-): (...args: T) => Promise<U> {
-  return (...args: T) =>
+function promisifyCallback<U>(callback: () => U): () => Promise<U> {
+  return () =>
     new Promise((resolve, reject) => {
-      Beat.callback(callback, args, resolve, reject);
+      Beat.callback(callback, [], resolve, reject);
     });
 }
 
@@ -95,11 +93,17 @@ let currentSelection: BeatSelectionRange | null = null;
 const getSelectedRange = promisifyCallback(
   () => Beat.selectedRange() as BeatSelectionRange,
 );
+
 const getDocumentText = promisifyCallback(() => Beat.getText() as string);
-const replaceRange = promisifyCallback(
-  (index: number, length: number, string: string) =>
-    Beat.replaceRange(index, length, string),
-);
+
+function replaceRange(index: number, length: number, string: string) {
+  // Beat.call and Beat.callback has issues with multiple arguments, use "tuple" arrays for now
+  Beat.call(
+    ([index, length, string]: [number, number, string]) =>
+      Beat.replaceRange(index, length, string),
+    [index, length, string],
+  );
+}
 
 async function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
   if (e.dataTransfer.getData("application/json").length === 0) {
@@ -112,10 +116,6 @@ function handleDragLeave() {
 }
 
 async function handleTextDropSuccess(newNote: BinNote) {
-  // Bug: Why does this add an "undefined" after the range?
-  // TODO: is this a Beat issue? reproduce
-  // replaceRange(0, 1, "");
-
   if (currentSelection && currentSelection.length > 0) {
     const text = await getDocumentText();
     const selectedText = text.slice(
