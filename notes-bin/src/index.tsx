@@ -42,7 +42,7 @@ function persistData(bin: Bin) {
 
 // Export/Import
 
-const TXT_SEPARATOR = "\n\n------\n\n";
+const TXT_SEPARATOR = "\n\n------------------\n\n";
 
 function handleExport(bin: Bin) {
   Beat.call(
