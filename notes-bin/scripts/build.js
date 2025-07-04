@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const process = require("process");
 
-// args: <dist path> <mode "dev-ui" | "prod">
+// args: <dist path> <mode "dev" | "dev-ui" | "prod">
 const DIST_PATH = process.argv[2];
 const MODE = process.argv[3];
 
@@ -25,7 +25,7 @@ const MODE = process.argv[3];
   await esbuild.build({
     entryPoints: [MODE === "dev-ui" ? "src/index-dev-ui.tsx" : "src/index.tsx"],
     bundle: true,
-    minify: true,
+    minify: MODE === "prod" || MODE === "dev",
     sourcemap: MODE === "dev-ui",
     outfile: path.join(DIST_PATH, "bundle.js"),
     tsconfig: emptyTsconfigPath,

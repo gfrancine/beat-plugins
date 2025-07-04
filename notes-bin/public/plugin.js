@@ -27,10 +27,25 @@ const htmlWindow = Beat.htmlWindow(
 // Restore position
 const windowPosition =
   Beat.getUserDefault("windowPosition") || DEFAULT_WINDOW_POS;
-if (windowPosition)
+
+if (windowPosition) {
   htmlWindow.setFrame(
     windowPosition.x,
     windowPosition.y,
     windowPosition.width,
     windowPosition.height,
   );
+}
+
+Beat.custom = {
+  // Beat doesn't have an async API so we have to rely on "pub-sub"
+  promptImportFile: () => {
+    Beat.openFile(["txt"], (path) => {
+      if (!path || path.length <= 0) return;
+      const contents = Beat.fileToString(path);
+      htmlWindow.runJS(
+        `PluginGlobals.onPromptImportFileResult(${JSON.stringify(contents)})`,
+      );
+    });
+  },
+};

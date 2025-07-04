@@ -22,9 +22,7 @@ function renderApp(bin: Bin) {
         handleExport={(bin) => {
           console.log("export bin", bin);
         }}
-        handleImport={() => {
-          return { success: true, bin: DEFAULT_BIN };
-        }}
+        handleImport={() => {}}
       />
     </React.StrictMode>,
   );

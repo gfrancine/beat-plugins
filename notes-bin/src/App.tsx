@@ -282,7 +282,8 @@ export default function App({
   bin: Bin;
   persistBin: (bin: Bin) => unknown;
   handleExport?: (bin: Bin) => unknown;
-  handleImport?: () => { success: true } | { success: false; message: string };
+  // expect the app to be re-rendered with a new "bin" prop
+  handleImport?: () => unknown;
 }) {
   const [internalBin, setInternalBin] = useState<Bin>(bin);
   const [searchQuery, setSearchQuery] = useState("");
@@ -314,13 +315,7 @@ export default function App({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {handleImport ? (
-            <button
-              className="button-secondary"
-              onClick={() => {
-                const result = handleImport();
-                // TODO
-              }}
-            >
+            <button className="button-secondary" onClick={() => handleImport()}>
               <ImportIcon />
             </button>
           ) : (
