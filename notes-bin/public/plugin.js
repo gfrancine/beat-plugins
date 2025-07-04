@@ -17,7 +17,7 @@ Image: Notes Bin.jpg
 
 */
 
-// Beat.openConsole();
+Beat.openConsole();
 
 const DEFAULT_WINDOW_POS = { x: 60, y: 60, width: 300, height: 800 };
 

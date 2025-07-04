@@ -55,7 +55,7 @@ function NoteDndItem({
         e.dataTransfer.setData("application/json", JSON.stringify({ noteId }));
         e.dataTransfer.setData("text/plain", getNoteContents());
       }}
-      onDragEnd={(e) => {
+      onDragEnd={(_e) => {
         /*
         // remove if drop was successful and outside of the drop zone?
         if (noteDndCtx.listRef && noteDndCtx.listRef.current) {
@@ -68,7 +68,7 @@ function NoteDndItem({
               e.clientX < listRect.x + listRect.width
             )
           ) {
-            //
+            // handle successful drop outside
           }
         } */
       }}
@@ -80,8 +80,12 @@ function NoteDndItem({
 
 function NoteDndList({
   children,
+  handleDragEnter,
+  handleDragLeave,
   handleNoteDropResult,
 }: {
+  handleDragEnter?: (event: React.DragEvent<HTMLDivElement>) => unknown;
+  handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => unknown;
   handleNoteDropResult?: (result: NoteDropResult) => unknown;
 } & React.PropsWithChildren) {
   const listRef = useRef<HTMLDivElement>(null);
@@ -102,8 +106,10 @@ function NoteDndList({
       <div
         className="note-dnd-list"
         ref={listRef}
-        onDragLeave={() => {
+        onDragEnter={(e) => handleDragEnter?.(e)}
+        onDragLeave={(e) => {
           setTargetIndex(null);
+          handleDragLeave?.(e);
         }}
         onDragOver={(e) => {
           e.preventDefault(); // accept drop
@@ -277,6 +283,9 @@ export default function App({
   persistBin,
   handleExport,
   handleImport,
+  handleDragEnter,
+  handleDragLeave,
+  handleTextDropSuccess,
 }: {
   version: string;
   bin: Bin;
@@ -284,6 +293,19 @@ export default function App({
   handleExport?: (bin: Bin) => unknown;
   // expect the app to be re-rendered with a new "bin" prop
   handleImport?: () => unknown;
+  // Text selection is lost when dropping; it should be tracked externally prior to it
+  handleDragEnter?: (event: React.DragEvent<HTMLDivElement>) => unknown;
+  handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => unknown;
+  // note successfully created by dropping
+  handleTextDropSuccess?: (newNote: BinNote) => unknown;
+  // note successfully dragged out
+  /* 
+    a note: since there's no way to tell if a drop is successful outside of the
+    app -- could be an accidental drag for example -- I've decided against
+    deleting notes when they're dragged out. It's already pretty easy to delete
+    them manually anyway.
+  */
+  // handleDragOutSuccess?: () => unknown;
 }) {
   const [internalBin, setInternalBin] = useState<Bin>(bin);
   const [searchQuery, setSearchQuery] = useState("");
@@ -360,6 +382,8 @@ export default function App({
       </div>
       <div className="notes">
         <NoteDndList
+          handleDragEnter={handleDragEnter}
+          handleDragLeave={handleDragLeave}
           handleNoteDropResult={(result) => {
             const newNotes = [...internalBin.notes];
 
@@ -368,7 +392,10 @@ export default function App({
                 id: nanoid(),
                 contents: result.contents,
               };
+
               newNotes.splice(result.targetIndex, 0, newNote);
+
+              handleTextDropSuccess?.(newNote);
             } else {
               let movingNoteIndex = -1;
               for (let i = 0; i < newNotes.length; i++) {

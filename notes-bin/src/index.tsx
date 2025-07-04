@@ -36,7 +36,7 @@ async function fetchData() {
   return migrateData(data as Partial<Bin> | undefined);
 }
 
-function setData(bin: Bin) {
+function persistData(bin: Bin) {
   Beat.call((bin: Bin) => {
     Beat.setDocumentSetting("data", JSON.stringify(bin));
   }, bin);
@@ -77,6 +77,60 @@ PluginGlobals.onPromptImportFileResult = function (contents: string) {
   renderApp(bin);
 };
 
+// External drop callbacks
+
+/*
+Removing text from the editor on drop: text selection disappears right before 
+a drop event is fired, so the plugin handles it by keeping track of the current
+selection during a dragging event. 
+
+When it detects a drop, it checks if the dropped text matches the selection.
+Which means if you drag text from outside the app that perfectly matches the
+selection somehow it will delete the selection, but it's highly unlikely
+*/
+
+type BeatSelectionRange = { location: number; length: number };
+let currentSelection: BeatSelectionRange | null = null;
+
+const getSelectedRange = promisifyCallback(
+  () => Beat.selectedRange() as BeatSelectionRange,
+);
+const getDocumentText = promisifyCallback(() => Beat.getText() as string);
+const replaceRange = promisifyCallback(
+  (index: number, length: number, string: string) =>
+    Beat.replaceRange(index, length, string),
+);
+
+async function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
+  if (e.dataTransfer.getData("application/json").length === 0) {
+    currentSelection = await getSelectedRange();
+  }
+}
+
+function handleDragLeave() {
+  currentSelection = null;
+}
+
+async function handleTextDropSuccess(newNote: BinNote) {
+  // Bug: Why does this add an "undefined" after the range?
+  // TODO: is this a Beat issue? reproduce
+  // replaceRange(0, 1, "");
+
+  if (currentSelection && currentSelection.length > 0) {
+    const text = await getDocumentText();
+    const selectedText = text.slice(
+      currentSelection.location,
+      currentSelection.location + currentSelection.length,
+    );
+
+    if (selectedText === newNote.contents) {
+      replaceRange(currentSelection.location, currentSelection.length, "");
+    }
+  }
+
+  currentSelection = null;
+}
+
 // Render app
 
 const rootElement = document.getElementById("root")!;
@@ -88,9 +142,12 @@ function renderApp(bin: Bin) {
       <App
         version={APP_VERSION}
         bin={bin}
-        persistBin={setData}
+        persistBin={persistData}
         handleExport={handleExport}
         handleImport={handleImport}
+        handleDragEnter={handleDragEnter}
+        handleDragLeave={handleDragLeave}
+        handleTextDropSuccess={handleTextDropSuccess}
       />
     </React.StrictMode>,
   );
