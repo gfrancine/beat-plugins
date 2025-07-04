@@ -272,20 +272,23 @@ export default function App({
 }) {
   const [internalBin, setInternalBin] = useState<Bin>(bin);
   const [searchQuery, setSearchQuery] = useState("");
-  const [theme, setTheme] = useState("dark");
 
+  // handle external updates / rerenders
   useEffect(() => {
-    // handle external updates
     setInternalBin(bin);
   }, [bin]);
 
-  function setAndPersistBin(bin: Bin) {
-    setInternalBin(bin);
+  // persist bin after every state update
+  useEffect(() => {
     persistBin(internalBin);
-  }
+  }, [internalBin]);
+
+  const setTheme = (theme: Bin["theme"]) => {
+    setInternalBin({ ...internalBin, theme });
+  };
 
   return (
-    <div className="app" data-theme={theme}>
+    <div className="app" data-theme={internalBin.theme}>
       <div className="header">
         <h2 className="title">Notes Bin v{version}</h2>
         <div className="toolbar">
@@ -322,7 +325,7 @@ export default function App({
           <button
             className="button-secondary"
             onClick={() => {
-              setTheme(theme === "dark" ? "light" : "dark");
+              setTheme(internalBin.theme === "dark" ? "light" : "dark");
             }}
           >
             <LightDarkIcon />
@@ -336,7 +339,7 @@ export default function App({
                 id: nanoid(),
                 contents: "",
               });
-              setAndPersistBin({
+              setInternalBin({
                 ...internalBin,
                 notes: newNotes,
               });
@@ -371,7 +374,7 @@ export default function App({
               }
             }
 
-            setAndPersistBin({
+            setInternalBin({
               ...internalBin,
               notes: newNotes,
             });
@@ -399,7 +402,7 @@ export default function App({
                 const newNotes = [...internalBin.notes];
                 newNotes[i] =
                   newNote; /* is this an issue if we delete notes? */
-                setAndPersistBin({
+                setInternalBin({
                   ...internalBin,
                   notes: newNotes,
                 });
@@ -407,7 +410,7 @@ export default function App({
               handleNoteDelete={() => {
                 const newNotes = [...internalBin.notes];
                 newNotes.splice(i, 1);
-                setAndPersistBin({
+                setInternalBin({
                   ...internalBin,
                   notes: newNotes,
                 });

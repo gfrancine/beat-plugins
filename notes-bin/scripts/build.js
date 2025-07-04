@@ -3,36 +3,41 @@ const { sassPlugin } = require("esbuild-sass-plugin");
 const alias = require("esbuild-plugin-alias");
 
 const path = require("path");
+const fs = require("fs");
 const process = require("process");
-const shell = require("shelljs");
 
-// args: <dist path> <mode "dev" | "prod">
+// args: <dist path> <mode "dev-ui" | "prod">
 const DIST_PATH = process.argv[2];
 const MODE = process.argv[3];
 
-const splitPath = DIST_PATH.split(path.sep);
-shell.rm("-rf", splitPath[0]);
-if (splitPath.length > 0)
-  shell.mkdir("-p", splitPath.slice(0, splitPath.length - 1).join(path.sep));
-shell.cp("-r", "plugin", DIST_PATH);
+(async () => {
+  fs.rmSync(DIST_PATH, { recursive: true, force: true });
+  fs.cpSync("public", DIST_PATH, { recursive: true });
 
-console.log(`
-Output folder: ${DIST_PATH}
-Mode: ${MODE}
-`);
+  console.log(`
+  Output folder: ${DIST_PATH}
+  Mode: ${MODE}
+  `);
 
-esbuild.build({
-  entryPoints: ["ui/index.tsx"],
-  bundle: true,
-  minify: true,
-  sourcemap: MODE === "dev",
-  outfile: path.join(DIST_PATH, "bundle.js"),
-  plugins: [
-    sassPlugin(),
-    alias({
-      react: require.resolve("preact/compat"),
-      "react-dom": require.resolve("preact/compat"),
-      "react-dom/client": require.resolve("preact/compat/client"),
-    }),
-  ],
-});
+  const emptyTsconfigPath = path.join(DIST_PATH, "empty-tsconfig.json");
+  fs.writeFileSync(emptyTsconfigPath, "{}");
+
+  await esbuild.build({
+    entryPoints: [MODE === "dev-ui" ? "src/index-dev-ui.tsx" : "src/index.tsx"],
+    bundle: true,
+    minify: true,
+    sourcemap: MODE === "dev-ui",
+    outfile: path.join(DIST_PATH, "bundle.js"),
+    tsconfig: emptyTsconfigPath,
+    plugins: [
+      sassPlugin(),
+      alias({
+        react: require.resolve("preact/compat"),
+        "react-dom": require.resolve("preact/compat"),
+        "react-dom/client": require.resolve("preact/compat/client"),
+      }),
+    ],
+  });
+
+  fs.rmSync(emptyTsconfigPath);
+})();
