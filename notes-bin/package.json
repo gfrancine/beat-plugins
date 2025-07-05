@@ -13,7 +13,6 @@
     "esbuild": "^0.25.5",
     "esbuild-plugin-alias": "^0.2.1",
     "esbuild-sass-plugin": "^3.3.1",
-    "install-plugin": "file:../install-plugin",
     "serve": "^14.2.4",
     "shelljs": "^0.10.0"
   },
