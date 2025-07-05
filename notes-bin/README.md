@@ -2,7 +2,7 @@
 
 A Highland 2-like container for storing and organizing your notes in snippets.
 
-![Notes Bin](public/images/Notes%20Bin.jpg)
+![Notes Bin](public/images/Notes%20Bin.png)
 
 <h2>Features</h2>
 <ul>
