@@ -40,6 +40,7 @@ const htmlWindow = Beat.htmlWindow(
     // save position
     const windowPosition = htmlWindow.getFrame();
     Beat.setUserDefault("windowPosition", windowPosition);
+    setWindowOpen(false); // update menu item state
   },
 );
 
