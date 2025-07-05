@@ -1,10 +1,11 @@
 {
   "scripts": {
     "build": "node scripts/build.js 'dist/Notes Bin.beatPlugin' prod",
-    "refresh": "node scripts/build.js 'dist/Notes Bin.beatPlugin' dev && install-plugin 'dist/Notes Bin.beatPlugin'",
-    "refresh-ui": "node scripts/build.js dist/ui dev-ui",
-    "dev": "npm run refresh && chokidar 'src/**' 'public/**' -c 'npm run refresh'",
-    "dev-ui": "npm run refresh-ui && chokidar 'src/**' 'public/**' -c 'npm run refresh-ui' & serve dist/ui --no-clipboard",
+    "install": "npm run build && install-plugin 'dist/Notes Bin.beatPlugin'",
+    "refresh-dev": "node scripts/build.js 'dist/Notes Bin.beatPlugin' dev && install-plugin 'dist/Notes Bin.beatPlugin'",
+    "refresh-dev-ui": "node scripts/build.js dist/ui dev-ui",
+    "dev": "npm run refresh-dev && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev'",
+    "dev-ui": "npm run refresh-dev-ui && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev-ui' & serve dist/ui --no-clipboard",
     "fmt": "cd .. && npm run fmt-all"
   },
   "devDependencies": {
