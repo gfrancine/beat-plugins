@@ -14,7 +14,6 @@ function renderApp(bin: Bin) {
   root.render(
     <React.StrictMode>
       <App
-        version={APP_VERSION}
         bin={bin}
         handleBinUpdate={(bin) => {
           console.log("bin update", bin);
