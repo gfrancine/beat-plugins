@@ -13,6 +13,10 @@ Image: images/Notes Bin.jpg
     <li>Import and export to text (.txt) files</li>
     <li>Text search</li>
   </ul>
+  <h2>Shortcuts</h2>
+  <ul>
+    <li>⌘⌥2 — Toggle window</li>
+  </ul>
 </Description>
 
 */
@@ -20,6 +24,15 @@ Image: images/Notes Bin.jpg
 // Beat.openConsole();
 
 const DEFAULT_WINDOW_POS = { x: 60, y: 60, width: 300, height: 800 };
+
+let windowOpen = true;
+
+const initiallyOpen = Beat.getDocumentSetting("windowOpen");
+if (initiallyOpen === undefined) {
+  Beat.setDocumentSetting("windowOpen", windowOpen);
+} else {
+  windowOpen = initiallyOpen === "true";
+}
 
 const htmlWindow = Beat.htmlWindow(
   Beat.assetAsString("index.html"),
@@ -29,9 +42,24 @@ const htmlWindow = Beat.htmlWindow(
     // save position
     const windowPosition = htmlWindow.getFrame();
     Beat.setUserDefault("windowPosition", windowPosition);
-    Beat.end();
+    // Beat.end();
   },
 );
+
+htmlWindow.stayInMemory = true;
+
+function setWindowOpen(value /* boolean */) {
+  windowOpen = value;
+  Beat.setDocumentSetting("windowOpen", windowOpen);
+
+  if (windowOpen) {
+    htmlWindow.show();
+  } else {
+    htmlWindow.hide();
+  }
+}
+
+setWindowOpen(initiallyOpen);
 
 // Restore position
 const windowPosition =
@@ -45,6 +73,21 @@ if (windowPosition) {
     windowPosition.height,
   );
 }
+
+// https://highland-kb.quoteunquoteapps.com/kb/sidebar/bin
+const menu = Beat.menu("Notes Bin", [
+  Beat.menuItem("Show Window", ["cmd", "alt", "3"], () =>
+    setWindowOpen(!windowOpen),
+  ),
+  /*
+  Beat.menuItem("Cut to Bin", ["cmd", "alt", "x"], () => {
+    Beat.log("cut to bin");
+  }),
+  Beat.menuItem("Copy to Bin", ["cmd", "alt", "c"], () => {
+    Beat.log("copy to bin");
+  }),
+  */
+]);
 
 Beat.custom = {
   // Beat doesn't have an async API so we have to rely on "pub-sub"
