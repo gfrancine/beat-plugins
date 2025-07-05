@@ -36,7 +36,11 @@ const htmlWindow = Beat.htmlWindow(
   Beat.assetAsString("index.html"),
   DEFAULT_WINDOW_POS.width,
   DEFAULT_WINDOW_POS.height,
-  onWindowClose,
+  () => {
+    // save position
+    const windowPosition = htmlWindow.getFrame();
+    Beat.setUserDefault("windowPosition", windowPosition);
+  },
 );
 
 htmlWindow.stayInMemory = true;
@@ -69,8 +73,6 @@ const showWindowMenuItem = Beat.menuItem(
 
 function setWindowOpen(value /* boolean */) {
   windowOpen = value;
-
-  Beat.setDocumentSetting("windowOpen", windowOpen);
   showWindowMenuItem.on = windowOpen;
 
   if (windowOpen) {
@@ -80,30 +82,14 @@ function setWindowOpen(value /* boolean */) {
   }
 }
 
-const initiallyOpen = Beat.getDocumentSetting("windowOpen");
-
-if (initiallyOpen === undefined) {
-  Beat.setDocumentSetting("windowOpen", windowOpen);
-} else {
-  windowOpen = initiallyOpen === "true";
-}
-
 setWindowOpen(windowOpen);
-
-function onWindowClose() {
-  // save position
-  const windowPosition = htmlWindow.getFrame();
-  Beat.setUserDefault("windowPosition", windowPosition);
-  //
-  setWindowOpen(false);
-}
 
 // Menu
 
-// https://highland-kb.quoteunquoteapps.com/kb/sidebar/bin
 const menu = Beat.menu("Notes Bin", [
   showWindowMenuItem,
   Beat.separatorMenuItem(),
+  // https://highland-kb.quoteunquoteapps.com/kb/sidebar/bin
   Beat.menuItem("Cut to Bin", ["cmd", "alt", "x"], () =>
     htmlWindow.runJS(`PluginGlobals.onCutToBin()`),
   ),
