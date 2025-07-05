@@ -13,7 +13,7 @@ A Highland 2-like container for storing and organizing your notes in snippets.
 </ul>
 <h2>Shortcuts</h2>
 <ul>
-  <li><code>Cmd + Opt + 2</code> — Toggle window</li>
+  <li><code>Cmd + Opt + Z</code> — Toggle window</li>
   <li><code>Cmd + Opt + X</code> — Cut selection to bin</li>
   <li><code>Cmd + Opt + C</code> — Copy selection to bin</li>
 </ul>
