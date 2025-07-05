@@ -388,55 +388,55 @@ export default function App({
         </div>
       </div>
       <div className="notes">
-        {internalBin.notes.length == 0 ? (
-          <div className="placeholder">
-            <div>
-              <p>
-                To store notes, drag text in and out of the bin or click on the
-                "+" button.
-              </p>
-              <p>
-                Press ⌘⌥X to cut or ⌘⌥C to copy directly from the selection.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <NoteDndList
-            handleDragEnter={handleDragEnter}
-            handleDragLeave={handleDragLeave}
-            handleNoteDropResult={(result) => {
-              const newNotes = [...internalBin.notes];
+        <NoteDndList
+          handleDragEnter={handleDragEnter}
+          handleDragLeave={handleDragLeave}
+          handleNoteDropResult={(result) => {
+            const newNotes = [...internalBin.notes];
 
-              if (result.type == "create") {
-                const newNote: BinNote = {
-                  id: nanoid(),
-                  contents: result.contents,
-                };
+            if (result.type == "create") {
+              const newNote: BinNote = {
+                id: nanoid(),
+                contents: result.contents,
+              };
 
-                newNotes.splice(result.targetIndex, 0, newNote);
+              newNotes.splice(result.targetIndex, 0, newNote);
 
-                handleTextDropSuccess?.(newNote);
-              } else {
-                let movingNoteIndex = -1;
-                for (let i = 0; i < newNotes.length; i++) {
-                  if (newNotes[i].id == result.id) {
-                    movingNoteIndex = i;
-                    break;
-                  }
-                }
-                if (movingNoteIndex > -1) {
-                  const [movingNote] = newNotes.splice(movingNoteIndex, 1);
-                  newNotes.splice(result.targetIndex, 0, movingNote);
+              handleTextDropSuccess?.(newNote);
+            } else {
+              let movingNoteIndex = -1;
+              for (let i = 0; i < newNotes.length; i++) {
+                if (newNotes[i].id == result.id) {
+                  movingNoteIndex = i;
+                  break;
                 }
               }
+              if (movingNoteIndex > -1) {
+                const [movingNote] = newNotes.splice(movingNoteIndex, 1);
+                newNotes.splice(result.targetIndex, 0, movingNote);
+              }
+            }
 
-              setInternalBin({
-                ...internalBin,
-                notes: newNotes,
-              });
-            }}
-          >
-            {internalBin.notes.map((note, i) => (
+            setInternalBin({
+              ...internalBin,
+              notes: newNotes,
+            });
+          }}
+        >
+          {internalBin.notes.length === 0 ? (
+            <div className="placeholder">
+              <div>
+                <p>
+                  To store notes, drag text in and out of the bin or click on
+                  the "+" button.
+                </p>
+                <p>
+                  Press ⌘⌥X to cut or ⌘⌥C to copy directly from the selection.
+                </p>
+              </div>
+            </div>
+          ) : (
+            internalBin.notes.map((note, i) => (
               <Note
                 index={i}
                 key={note.id}
@@ -464,9 +464,9 @@ export default function App({
                   });
                 }}
               />
-            ))}
-          </NoteDndList>
-        )}
+            ))
+          )}
+        </NoteDndList>
       </div>
     </div>
   );
