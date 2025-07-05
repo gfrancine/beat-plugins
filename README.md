@@ -1,6 +1,9 @@
 # Beat Plugins
 
-Plugins for the [Beat](https://github.com/lmparppei/Beat) screenwriting program.
+Various plugins for the [Beat](https://github.com/lmparppei/Beat) screenwriting program.
+
+- [Notes Bin](notes-bin)
+- [Clean (CONT'D's)](clean-contds)
 
 ## Developing
 

@@ -289,7 +289,7 @@ function Note({
 export default function App({
   version,
   bin,
-  persistBin,
+  handleBinUpdate,
   handleExport,
   handleImport,
   handleDragEnter,
@@ -298,7 +298,7 @@ export default function App({
 }: {
   version: string;
   bin: Bin;
-  persistBin: (bin: Bin) => unknown;
+  handleBinUpdate?: (bin: Bin) => unknown;
   handleExport?: (bin: Bin) => unknown;
   // expect the app to be re-rendered with a new "bin" prop
   handleImport?: () => unknown;
@@ -324,9 +324,8 @@ export default function App({
     setInternalBin(bin);
   }, [bin]);
 
-  // persist bin after every state update
   useEffect(() => {
-    persistBin(internalBin);
+    handleBinUpdate?.(internalBin);
   }, [internalBin]);
 
   const setTheme = (theme: Bin["theme"]) => {
@@ -392,8 +391,11 @@ export default function App({
       <div className="notes">
         {internalBin.notes.length == 0 ? (
           <div className="placeholder">
-            To store notes, drag text in and out of the bin or click on the "+"
-            button.
+            <p>
+              To store notes, drag text in and out of the bin or click on the
+              "+"button.
+            </p>
+            <p>Press </p>
           </div>
         ) : (
           <NoteDndList

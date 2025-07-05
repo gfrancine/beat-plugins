@@ -40,6 +40,14 @@ function persistData(bin: Bin) {
   }, bin);
 }
 
+// for peeking at the internal app state
+let internalBin: Bin | undefined;
+
+function handleBinUpdate(bin: Bin) {
+  internalBin = bin;
+  persistData(bin); // persist bin after every state update
+}
+
 // Export/Import
 
 const TXT_SEPARATOR = "\n\n------------------\n\n";
@@ -115,21 +123,49 @@ function handleDragLeave() {
   currentSelection = null;
 }
 
+async function getSelectedText(location: number, length: number) {
+  const text = await getDocumentText();
+  return text.slice(location, location + length);
+}
+
 async function handleTextDropSuccess(newNote: BinNote) {
   if (currentSelection && currentSelection.length > 0) {
-    const text = await getDocumentText();
-    const selectedText = text.slice(
+    const selectedText = await getSelectedText(
       currentSelection.location,
-      currentSelection.location + currentSelection.length,
+      currentSelection.length,
     );
-
-    if (selectedText === newNote.contents) {
+    if (selectedText && selectedText === newNote.contents) {
       replaceRange(currentSelection.location, currentSelection.length, "");
     }
   }
 
   currentSelection = null;
 }
+
+function insertNewNote(contents: string) {
+  if (!internalBin) return;
+
+  const newNote = { id: nanoid(), contents };
+  const newNotes = [newNote, ...internalBin.notes];
+  const newBin = { ...internalBin, notes: newNotes };
+
+  renderApp(newBin);
+}
+
+PluginGlobals.onCutToBin = async () => {
+  const { location, length } = await getSelectedRange();
+  const selectedText = await getSelectedText(location, length);
+  if (selectedText) {
+    replaceRange(location, length, "");
+    insertNewNote(selectedText);
+  }
+};
+
+PluginGlobals.onCopyToBin = async () => {
+  const { location, length } = await getSelectedRange();
+  const selectedText = await getSelectedText(location, length);
+  if (selectedText) insertNewNote(selectedText);
+};
 
 // Render app
 
@@ -142,7 +178,7 @@ function renderApp(bin: Bin) {
       <App
         version={APP_VERSION}
         bin={bin}
-        persistBin={persistData}
+        handleBinUpdate={handleBinUpdate}
         handleExport={handleExport}
         handleImport={handleImport}
         handleDragEnter={handleDragEnter}

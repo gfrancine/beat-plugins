@@ -16,13 +16,9 @@ function renderApp(bin: Bin) {
       <App
         version={APP_VERSION}
         bin={bin}
-        persistBin={(bin) => {
-          console.log("persist bin", bin);
+        handleBinUpdate={(bin) => {
+          console.log("bin update", bin);
         }}
-        handleExport={(bin) => {
-          console.log("export bin", bin);
-        }}
-        handleImport={() => {}}
       />
     </React.StrictMode>,
   );

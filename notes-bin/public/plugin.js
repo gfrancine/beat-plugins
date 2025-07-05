@@ -10,56 +10,34 @@ Image: images/Notes Bin.jpg
   <h2>Features</h2>
   <ul>
     <li>Drag and drop text from anywhere to create notes or drag notes out of the bin</li>
-    <li>Import and export to text (.txt) files</li>
+    <li>Import and export to text (<code>.txt</code>) files</li>
     <li>Text search</li>
+    <li>Cut or copy directly from selection</li>
   </ul>
   <h2>Shortcuts</h2>
   <ul>
-    <li>⌘⌥2 — Toggle window</li>
+    <li><code>Cmd + Opt + 2</code> — Toggle window</li>
+    <li><code>Cmd + Opt + X</code> — Cut selection to bin</li>
+    <li><code>Cmd + Opt + C</code> — Copy selection to bin</li>
   </ul>
 </Description>
 
 */
 
-// Beat.openConsole();
+// Window
+
+// Window positioning
 
 const DEFAULT_WINDOW_POS = { x: 60, y: 60, width: 300, height: 800 };
-
-let windowOpen = true;
-
-const initiallyOpen = Beat.getDocumentSetting("windowOpen");
-if (initiallyOpen === undefined) {
-  Beat.setDocumentSetting("windowOpen", windowOpen);
-} else {
-  windowOpen = initiallyOpen === "true";
-}
 
 const htmlWindow = Beat.htmlWindow(
   Beat.assetAsString("index.html"),
   DEFAULT_WINDOW_POS.width,
   DEFAULT_WINDOW_POS.height,
-  () => {
-    // save position
-    const windowPosition = htmlWindow.getFrame();
-    Beat.setUserDefault("windowPosition", windowPosition);
-    // Beat.end();
-  },
+  onWindowClose,
 );
 
 htmlWindow.stayInMemory = true;
-
-function setWindowOpen(value /* boolean */) {
-  windowOpen = value;
-  Beat.setDocumentSetting("windowOpen", windowOpen);
-
-  if (windowOpen) {
-    htmlWindow.show();
-  } else {
-    htmlWindow.hide();
-  }
-}
-
-setWindowOpen(initiallyOpen);
 
 // Restore position
 const windowPosition =
@@ -74,19 +52,61 @@ if (windowPosition) {
   );
 }
 
+// Window open/close
+
+let windowOpen = true;
+
+const showWindowMenuItem = Beat.menuItem(
+  "Show Window",
+  ["cmd", "alt", "2"],
+  () => {
+    setWindowOpen(!windowOpen);
+  },
+);
+
+function setWindowOpen(value /* boolean */) {
+  windowOpen = value;
+
+  Beat.setDocumentSetting("windowOpen", windowOpen);
+  showWindowMenuItem.on = windowOpen;
+
+  if (windowOpen) {
+    htmlWindow.show();
+  } else {
+    htmlWindow.hide();
+  }
+}
+
+const initiallyOpen = Beat.getDocumentSetting("windowOpen");
+
+if (initiallyOpen === undefined) {
+  Beat.setDocumentSetting("windowOpen", windowOpen);
+} else {
+  windowOpen = initiallyOpen === "true";
+}
+
+setWindowOpen(windowOpen);
+
+function onWindowClose() {
+  // save position
+  const windowPosition = htmlWindow.getFrame();
+  Beat.setUserDefault("windowPosition", windowPosition);
+  //
+  setWindowOpen(false);
+}
+
+// Menu
+
 // https://highland-kb.quoteunquoteapps.com/kb/sidebar/bin
 const menu = Beat.menu("Notes Bin", [
-  Beat.menuItem("Show Window", ["cmd", "alt", "3"], () =>
-    setWindowOpen(!windowOpen),
+  showWindowMenuItem,
+  Beat.separatorMenuItem(),
+  Beat.menuItem("Cut to Bin", ["cmd", "alt", "x"], () =>
+    htmlWindow.runJS(`PluginGlobals.onCutToBin()`),
   ),
-  /*
-  Beat.menuItem("Cut to Bin", ["cmd", "alt", "x"], () => {
-    Beat.log("cut to bin");
-  }),
-  Beat.menuItem("Copy to Bin", ["cmd", "alt", "c"], () => {
-    Beat.log("copy to bin");
-  }),
-  */
+  Beat.menuItem("Copy to Bin", ["cmd", "alt", "c"], () =>
+    htmlWindow.runJS(`PluginGlobals.onCopyToBin()`),
+  ),
 ]);
 
 Beat.custom = {
