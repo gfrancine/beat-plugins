@@ -5,6 +5,7 @@
 $size-space: 0.4rem;
 $size-corner: 0.2rem;
 $size-border: 1.2pt;
+$size-scrollbar: 1rem;
 $size-input: 2.2rem;
 
 .app[data-theme="dark"] {
@@ -13,7 +14,11 @@ $size-input: 2.2rem;
   --fg-secondary: #{$tw-neutral-500};
   --accent: #{$tw-blue-500};
   --border: #{$tw-neutral-600};
+  --scrollbar: #{$tw-neutral-600};
+  --scrollbar-hover: #{$tw-neutral-500};
+  // --pseudos-filter: invert(1);
   --elevated-bg: #{$tw-neutral-800};
+  --elevated-bg-hover: #{$tw-neutral-700};
   --elevated-fg: #{$tw-neutral-100};
   --elevated-fg-secondary: #{$tw-neutral-400};
   --elevated-fg-placeholder: #{$tw-neutral-500};
@@ -31,7 +36,11 @@ $size-input: 2.2rem;
   --fg-secondary: #{$tw-neutral-500};
   --accent: #{$tw-blue-500};
   --border: #{$tw-neutral-300};
-  --elevated-bg: #{$tw-neutral-050};
+  --scrollbar: #{$tw-neutral-300};
+  --scrollbar-hover: #{$tw-neutral-400};
+  // --pseudos-filter: none;
+  --elevated-bg: white;
+  --elevated-bg-hover: #{$tw-neutral-100};
   --elevated-fg: #{$tw-neutral-950};
   --elevated-fg-secondary: #{$tw-neutral-600};
   --elevated-fg-placeholder: #{$tw-neutral-500};
@@ -52,6 +61,11 @@ $border-accent: solid $size-border var(--accent);
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-wrap: inherit;
 }
 
 @mixin button-base {
@@ -134,11 +148,40 @@ body {
   color: var(--fg);
   background-color: var(--bg);
   height: 100%;
-  font-family: sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  // Scroll bar
+  // https://stackoverflow.com/a/67902128
+  // https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
+  scrollbar-color: var(--scrollbar) transparent;
+
+  ::-webkit-scrollbar {
+    background: transparent;
+    width: $size-scrollbar;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+    border-radius: 50em;
+    // webkit scrollbar padding https://stackoverflow.com/a/59436086
+    background-clip: content-box;
+    border: solid calc($size-scrollbar / 6) transparent;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover);
+    background-clip: content-box;
+    border: solid calc($size-scrollbar / 6) transparent;
+  }
 
   * {
     box-sizing: border-box;
@@ -178,9 +221,19 @@ body {
         flex: 1;
         border-radius: $size-corner;
         border: $border;
+        cursor: text;
 
         &:focus {
           outline: $border-accent;
+        }
+
+        // https://stackoverflow.com/a/64267916
+        &::-webkit-search-cancel-button {
+          -webkit-appearance: none;
+          height: 1em;
+          width: 1em;
+          background: url("./images/icon-cancel16.svg") no-repeat 50% 50%;
+          background-size: contain;
         }
       }
     }
@@ -188,6 +241,7 @@ body {
 
   .notes {
     flex: 1;
+    height: 100%;
     padding: $size-space;
     overflow-x: hidden;
 
@@ -204,95 +258,133 @@ body {
     }
 
     .note-dnd-list {
+      margin: 0;
       height: 100%;
-    }
+      padding: 0;
+      list-style: none;
 
-    .note-dnd-item {
-      padding: calc($size-space/2) 0;
-      background: transparent;
+      .note-dnd-item {
+        padding: calc($size-space/2) 0;
+        background: transparent;
 
-      &.above {
-        border-top: solid calc($size-border/2) var(--accent);
-      }
-      &.under {
-        border-bottom: solid calc($size-border/2) var(--accent);
-      }
-
-      &:first-child.above {
-        border-top: $border-accent;
-      }
-      &:last-child.under {
-        border-bottom: $border-accent;
-      }
-
-      .note {
-        // border-radius: $size-corner;
-        // background: var(--elevated-bg);
-        position: relative;
-        user-select: none;
-        cursor: pointer;
-
-        /* &:hover {
-          opacity: 70%;
-        } */
-
-        .note-topbar {
-          display: flex;
-          flex-direction: row;
-          position: absolute;
-          width: fit-content;
-          right: $size-space;
-          top: $size-space;
-          opacity: 0;
-
-          button {
-            height: $size-input;
-            width: $size-input;
-
-            .icon {
-              width: 100%;
-              height: 100%;
-              fill: var(--elevated-fg);
-            }
-          }
+        &.above {
+          border-top: solid calc($size-border/2) var(--accent);
+        }
+        &.under {
+          border-bottom: solid calc($size-border/2) var(--accent);
         }
 
-        &:hover .note-topbar {
-          opacity: 1;
+        &:first-child.above {
+          border-top: $border-accent;
+        }
+        &:last-child.under {
+          border-bottom: $border-accent;
         }
 
-        textarea {
+        .note {
           @include inherit-typography;
 
-          width: 100%;
-          min-height: 8.5em;
-          height: 8.5em;
-          border-radius: $size-corner;
-          resize: none;
-          color: var(--elevated-fg-secondary);
-          background: var(--elevated-bg);
-          padding: $size-space * 1.5;
-          border: $border;
-          overflow-y: hidden;
+          // border-radius: $size-corner;
+          // background: var(--elevated-bg);
+          position: relative;
           user-select: none;
-          cursor: inherit;
-
-          &::placeholder {
-            color: var(--elevated-fg-placeholder);
-          }
+          cursor: pointer;
+          display: block;
+          width: 100%;
+          appearance: none;
+          padding: 0;
+          border: 0;
+          background: none;
+          font-size: inherit;
+          border-radius: $size-corner;
 
           &:focus {
             outline: $border-accent;
           }
 
-          &.editing {
+          /* &:hover {
+          opacity: 70%;
+        } */
+
+          .note-topbar {
+            display: flex;
+            flex-direction: row;
+            position: absolute;
+            width: fit-content;
+            right: $size-space;
+            top: $size-space;
+            opacity: 0;
+
+            button {
+              height: $size-input;
+              width: $size-input;
+
+              .icon {
+                width: 100%;
+                height: 100%;
+                fill: var(--elevated-fg);
+              }
+            }
+          }
+
+          &:hover .note-topbar {
+            opacity: 1;
+          }
+
+          .text-display,
+          .text-editor {
+            border-radius: $size-corner;
+
+            background: var(--elevated-bg);
+            border: $border;
+
+            @include inherit-typography;
+
+            width: 100%;
+            min-height: 8.5em;
+            height: 8.5em;
+            padding: $size-space * 1.5;
+          }
+
+          .text-display {
+            padding: $size-space * 1.5;
+            overflow: hidden;
+            margin: 0;
+            user-select: none;
+            cursor: inherit;
+            color: var(--elevated-fg-secondary);
+
+            &.empty {
+              color: var(--elevated-fg-placeholder);
+            }
+
+            &:hover {
+              background: var(--elevated-bg-hover);
+            }
+          }
+
+          .text-editor {
             color: var(--elevated-fg);
             height: 40em;
             font-size: 9.5pt;
-            overflow-y: auto;
             user-select: all;
             resize: vertical;
             cursor: text;
+
+            &:focus {
+              outline: $border-accent;
+            }
+
+            &::placeholder {
+              color: var(--elevated-fg-placeholder);
+            }
+
+            &::-webkit-resizer {
+              appearance: none;
+              background: url("./images/icon-expand16.svg") no-repeat 50% 50%;
+              background-size: contain;
+              background-color: inherit;
+            }
           }
         }
       }

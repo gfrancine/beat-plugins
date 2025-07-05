@@ -29,6 +29,7 @@ const MODE = process.argv[3];
     sourcemap: MODE === "dev-ui",
     outfile: path.join(DIST_PATH, "bundle.js"),
     tsconfig: emptyTsconfigPath,
+    external: ["./images/*"],
     plugins: [
       sassPlugin(),
       alias({

@@ -18,7 +18,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 const NoteDndContext = createContext<{
   targetIndex: null | number;
-  listRef: null | React.RefObject<HTMLDivElement>;
+  listRef: null | React.RefObject<HTMLElement>;
 }>({
   targetIndex: null,
   listRef: null,
@@ -47,7 +47,7 @@ function NoteDndItem({
         : "";
 
   return (
-    <div
+    <li
       className={"note-dnd-item " + dragoverPositionClass}
       data-note-index={index}
       draggable={allowDrag === undefined ? true : allowDrag}
@@ -74,7 +74,7 @@ function NoteDndItem({
       }}
     >
       {children}
-    </div>
+    </li>
   );
 }
 
@@ -84,14 +84,14 @@ function NoteDndList({
   handleDragLeave,
   handleNoteDropResult,
 }: {
-  handleDragEnter?: (event: React.DragEvent<HTMLDivElement>) => unknown;
-  handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => unknown;
+  handleDragEnter?: (event: React.DragEvent<HTMLElement>) => unknown;
+  handleDragLeave?: (event: React.DragEvent<HTMLElement>) => unknown;
   handleNoteDropResult?: (result: NoteDropResult) => unknown;
 } & React.PropsWithChildren) {
-  const listRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLElement>(null);
   const [noteDndCtx, setNoteDndCtx] = useState<{
     targetIndex: null | number;
-    listRef: null | React.RefObject<HTMLDivElement>;
+    listRef: null | React.RefObject<HTMLElement>;
   }>({
     targetIndex: null,
     listRef,
@@ -103,9 +103,9 @@ function NoteDndList({
 
   return (
     <NoteDndContext.Provider value={noteDndCtx}>
-      <div
+      <ul
         className="note-dnd-list"
-        ref={listRef}
+        ref={listRef as React.RefObject<HTMLUListElement>}
         onDragEnter={(e) => handleDragEnter?.(e)}
         onDragLeave={(e) => {
           setTargetIndex(null);
@@ -185,7 +185,7 @@ function NoteDndList({
         }}
       >
         {children}
-      </div>
+      </ul>
     </NoteDndContext.Provider>
   );
 }
@@ -207,14 +207,6 @@ function Note({
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (textareaRef.current && !isEditing) {
-      const textarea = textareaRef.current;
-      textarea.scrollTop = 0;
-      textarea.setAttribute("style", "");
-    }
-  }, [isEditing]);
-
   const saveNote = () => {
     const newNote = { ...note };
     newNote.contents = internalContents;
@@ -227,6 +219,14 @@ function Note({
     trailing: true,
   });
 
+  // focus textarea on edit
+  useEffect(() => {
+    if (textareaRef.current && isEditing) {
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(0, 0);
+    }
+  }, [isEditing]);
+
   return hidden ? (
     <></>
   ) : (
@@ -236,7 +236,7 @@ function Note({
       allowDrag={!isEditing}
       getNoteContents={() => internalContents}
     >
-      <div
+      <button
         className="note"
         onDoubleClick={() => {
           if (!isEditing) setIsEditing(true);
@@ -257,22 +257,31 @@ function Note({
             </button>
           )}
         </div>
-        <textarea
-          ref={textareaRef}
-          className={isEditing ? "editing" : ""}
-          value={internalContents}
-          readOnly={!isEditing}
-          onChange={(e) => {
-            setInternalContent(e.target.value);
-            debouncedSaveNote();
-          }}
-          placeholder="Note..."
-          onBlur={() => {
-            saveNote();
-            setIsEditing(false);
-          }}
-        />
-      </div>
+        {isEditing ? (
+          <textarea
+            className="text-editor"
+            value={internalContents}
+            ref={textareaRef}
+            onChange={(e) => {
+              setInternalContent(e.target.value);
+              debouncedSaveNote();
+            }}
+            placeholder="Note..."
+            onBlur={() => {
+              saveNote();
+              setIsEditing(false);
+            }}
+          />
+        ) : (
+          <pre
+            className={
+              "text-display" + (internalContents.length === 0 ? " empty" : "")
+            }
+          >
+            {internalContents.length === 0 ? "Note..." : internalContents}
+          </pre>
+        )}
+      </button>
     </NoteDndItem>
   );
 }
@@ -294,8 +303,8 @@ export default function App({
   // expect the app to be re-rendered with a new "bin" prop
   handleImport?: () => unknown;
   // Text selection is lost when dropping; it should be tracked externally prior to it
-  handleDragEnter?: (event: React.DragEvent<HTMLDivElement>) => unknown;
-  handleDragLeave?: (event: React.DragEvent<HTMLDivElement>) => unknown;
+  handleDragEnter?: (event: React.DragEvent<HTMLElement>) => unknown;
+  handleDragLeave?: (event: React.DragEvent<HTMLElement>) => unknown;
   // note successfully created by dropping
   handleTextDropSuccess?: (newNote: BinNote) => unknown;
   // note successfully dragged out
@@ -381,79 +390,78 @@ export default function App({
         </div>
       </div>
       <div className="notes">
-        <NoteDndList
-          handleDragEnter={handleDragEnter}
-          handleDragLeave={handleDragLeave}
-          handleNoteDropResult={(result) => {
-            const newNotes = [...internalBin.notes];
+        {internalBin.notes.length == 0 ? (
+          <div className="placeholder">
+            To store notes, drag text in and out of the bin or click on the "+"
+            button.
+          </div>
+        ) : (
+          <NoteDndList
+            handleDragEnter={handleDragEnter}
+            handleDragLeave={handleDragLeave}
+            handleNoteDropResult={(result) => {
+              const newNotes = [...internalBin.notes];
 
-            if (result.type == "create") {
-              const newNote: BinNote = {
-                id: nanoid(),
-                contents: result.contents,
-              };
+              if (result.type == "create") {
+                const newNote: BinNote = {
+                  id: nanoid(),
+                  contents: result.contents,
+                };
 
-              newNotes.splice(result.targetIndex, 0, newNote);
+                newNotes.splice(result.targetIndex, 0, newNote);
 
-              handleTextDropSuccess?.(newNote);
-            } else {
-              let movingNoteIndex = -1;
-              for (let i = 0; i < newNotes.length; i++) {
-                if (newNotes[i].id == result.id) {
-                  movingNoteIndex = i;
-                  break;
+                handleTextDropSuccess?.(newNote);
+              } else {
+                let movingNoteIndex = -1;
+                for (let i = 0; i < newNotes.length; i++) {
+                  if (newNotes[i].id == result.id) {
+                    movingNoteIndex = i;
+                    break;
+                  }
+                }
+                if (movingNoteIndex > -1) {
+                  const [movingNote] = newNotes.splice(movingNoteIndex, 1);
+                  newNotes.splice(result.targetIndex, 0, movingNote);
                 }
               }
-              if (movingNoteIndex > -1) {
-                const [movingNote] = newNotes.splice(movingNoteIndex, 1);
-                newNotes.splice(result.targetIndex, 0, movingNote);
-              }
-            }
 
-            setInternalBin({
-              ...internalBin,
-              notes: newNotes,
-            });
-          }}
-        >
-          {internalBin.notes.length == 0 ? (
-            <div className="placeholder">
-              To store notes, drag text in and out of the bin or click on the
-              "+" button.
-            </div>
-          ) : (
-            <></>
-          )}
-          {internalBin.notes.map((note, i) => (
-            <Note
-              index={i}
-              key={note.id}
-              note={note}
-              hidden={
-                searchQuery.length === 0
-                  ? false
-                  : note.contents.toLowerCase().search(searchQuery) === -1
-              }
-              handleNoteSave={(newNote) => {
-                const newNotes = [...internalBin.notes];
-                newNotes[i] =
-                  newNote; /* is this an issue if we delete notes? */
-                setInternalBin({
-                  ...internalBin,
-                  notes: newNotes,
-                });
-              }}
-              handleNoteDelete={() => {
-                const newNotes = [...internalBin.notes];
-                newNotes.splice(i, 1);
-                setInternalBin({
-                  ...internalBin,
-                  notes: newNotes,
-                });
-              }}
-            />
-          ))}
-        </NoteDndList>
+              setInternalBin({
+                ...internalBin,
+                notes: newNotes,
+              });
+            }}
+          >
+            {internalBin.notes.map((note, i) => (
+              <Note
+                index={i}
+                key={note.id}
+                note={note}
+                hidden={
+                  searchQuery.length === 0
+                    ? false
+                    : note.contents.toLowerCase().search(searchQuery) === -1
+                }
+                handleNoteSave={(newNote) => {
+                  const newNotes = [...internalBin.notes];
+                  newNotes[i] =
+                    newNote; /* is this an issue if we delete notes? */
+                  setInternalBin({
+                    ...internalBin,
+                    notes: newNotes,
+                  });
+                }}
+                handleNoteDelete={() => {
+                  const newNotes = [...internalBin.notes];
+                  newNotes.splice(i, 1);
+                  setInternalBin({
+                    ...internalBin,
+                    notes: newNotes,
+                  });
+                }}
+              />
+            ))}
+          </NoteDndList>
+        )}
       </div>
     </div>
   );

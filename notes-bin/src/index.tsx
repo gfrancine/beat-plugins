@@ -105,7 +105,7 @@ function replaceRange(index: number, length: number, string: string) {
   );
 }
 
-async function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
+async function handleDragEnter(e: React.DragEvent<HTMLElement>) {
   if (e.dataTransfer.getData("application/json").length === 0) {
     currentSelection = await getSelectedRange();
   }
