@@ -287,7 +287,6 @@ function Note({
 }
 
 export default function App({
-  version,
   bin,
   handleBinUpdate,
   handleExport,
@@ -296,7 +295,6 @@ export default function App({
   handleDragLeave,
   handleTextDropSuccess,
 }: {
-  version: string;
   bin: Bin;
   handleBinUpdate?: (bin: Bin) => unknown;
   handleExport?: (bin: Bin) => unknown;
@@ -335,7 +333,8 @@ export default function App({
   return (
     <div className="app" data-theme={internalBin.theme}>
       <div className="header">
-        <h2 className="title">Notes Bin v{version}</h2>
+        {/* Remove for now
+        <h2 className="title">Notes Bin v{version}</h2> */}
         <div className="toolbar">
           <input
             className="search"
@@ -391,11 +390,15 @@ export default function App({
       <div className="notes">
         {internalBin.notes.length == 0 ? (
           <div className="placeholder">
-            <p>
-              To store notes, drag text in and out of the bin or click on the
-              "+"button.
-            </p>
-            <p>Press </p>
+            <div>
+              <p>
+                To store notes, drag text in and out of the bin or click on the
+                "+" button.
+              </p>
+              <p>
+                Press ⌘⌥X to cut or ⌘⌥C to copy directly from the selection.
+              </p>
+            </div>
           </div>
         ) : (
           <NoteDndList

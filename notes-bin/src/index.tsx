@@ -5,8 +5,6 @@ import { Bin, BinNote } from "./types";
 import "./styles.scss";
 import { nanoid } from "nanoid";
 
-const APP_VERSION = "0.1.0";
-
 // Bundle-safe namespace, for functions called from the plugin-side with runJS
 (window as any).PluginGlobals = {};
 
@@ -176,7 +174,6 @@ function renderApp(bin: Bin) {
   root.render(
     <React.StrictMode>
       <App
-        version={APP_VERSION}
         bin={bin}
         handleBinUpdate={handleBinUpdate}
         handleExport={handleExport}

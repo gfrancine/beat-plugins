@@ -24,6 +24,8 @@ Image: images/Notes Bin.jpg
 
 */
 
+const APP_VERSION = "0.1.0";
+
 // Window
 
 // Window positioning
@@ -38,6 +40,7 @@ const htmlWindow = Beat.htmlWindow(
 );
 
 htmlWindow.stayInMemory = true;
+htmlWindow.title = "Notes Bin " + APP_VERSION;
 
 // Restore position
 const windowPosition =
