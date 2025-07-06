@@ -24,6 +24,7 @@ const MODE = process.argv[3];
 
   await esbuild.build({
     entryPoints: [MODE === "dev-ui" ? "src/index-dev-ui.tsx" : "src/index.tsx"],
+    conditions: [MODE === "prod" ? "production" : "development"],
     bundle: true,
     minify: MODE === "prod" || MODE === "dev",
     sourcemap: MODE === "dev-ui",

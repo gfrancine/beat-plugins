@@ -12,14 +12,12 @@ const root = ReactDOM.createRoot(rootElement);
 
 function renderApp(bin: Bin) {
   root.render(
-    <React.StrictMode>
-      <App
-        bin={bin}
-        handleBinUpdate={(bin) => {
-          console.log("bin update", bin);
-        }}
-      />
-    </React.StrictMode>,
+    <App
+      bin={bin}
+      handleBinUpdate={(bin) => {
+        console.log("bin update", bin);
+      }}
+    />,
   );
 }
 

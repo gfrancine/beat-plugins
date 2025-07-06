@@ -172,17 +172,15 @@ const root = ReactDOM.createRoot(rootElement);
 
 function renderApp(bin: Bin) {
   root.render(
-    <React.StrictMode>
-      <App
-        bin={bin}
-        handleBinUpdate={handleBinUpdate}
-        handleExport={handleExport}
-        handleImport={handleImport}
-        handleDragEnter={handleDragEnter}
-        handleDragLeave={handleDragLeave}
-        handleTextDropSuccess={handleTextDropSuccess}
-      />
-    </React.StrictMode>,
+    <App
+      bin={bin}
+      handleBinUpdate={handleBinUpdate}
+      handleExport={handleExport}
+      handleImport={handleImport}
+      handleDragEnter={handleDragEnter}
+      handleDragLeave={handleDragLeave}
+      handleTextDropSuccess={handleTextDropSuccess}
+    />,
   );
 }
 
