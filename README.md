@@ -4,6 +4,7 @@ Various plugins for the [Beat](https://github.com/lmparppei/Beat) screenwriting 
 
 - [Notes Bin](notes-bin)
 - [Clean (CONT'D's)](clean-contds)
+- [Excalidraw](excalidraw)
 
 ## Developing
 

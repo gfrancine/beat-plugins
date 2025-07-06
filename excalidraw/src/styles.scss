@@ -1,0 +1,52 @@
+:root,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.app {
+  // using percentage will make the app disappear
+  height: 100vh;
+}
+
+.excalidraw {
+  .export-dialog {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 20em;
+
+    * {
+      font-family: var(--ui-font);
+    }
+
+    .export-button.ToolIcon {
+      width: fit-content;
+      font: inherit;
+      letter-spacing: normal;
+      margin: 1rem 0;
+      background-color: var(--color-primary);
+      padding: 0;
+      height: 2.5rem;
+      border: none;
+
+      &:hover {
+        background-color: var(--color-primary-darker);
+      }
+
+      .label {
+        display: flex;
+        align-items: center;
+        color: var(--color-surface-lowest);
+        margin: 0 0.8em;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
