@@ -8,15 +8,6 @@
     "dev-ui": "npm run refresh-dev-ui && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev-ui' & serve dist/ui --no-clipboard",
     "fmt": "cd .. && npm run fmt-all"
   },
-  "devDependencies": {
-    "@types/react": "^18.0.4",
-    "@types/react-dom": "^18.0.0",
-    "esbuild": "^0.25.5",
-    "esbuild-plugin-alias": "^0.2.1",
-    "esbuild-sass-plugin": "^3.3.1",
-    "serve": "^14.2.4",
-    "shelljs": "^0.10.0"
-  },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
     "nanoid": "^5.1.5",

@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "dev": "install-plugin 'Clean (CONT'D)'s.beatPlugin'"
+    "install": "install-plugin 'Clean (CONT'D)'s.beatPlugin'"
   }
 }
