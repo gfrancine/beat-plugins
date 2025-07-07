@@ -1,9 +1,0 @@
-{
-  "name": "install-plugin",
-  "version": "0.1.0",
-  "description": "Utility to install local plugins in Beat",
-  "main": "index.js",
-  "bin": {
-    "install-plugin": "index.js"
-  }
-}

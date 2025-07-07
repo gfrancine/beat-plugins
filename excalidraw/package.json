@@ -1,8 +1,8 @@
 {
   "scripts": {
     "build": "node scripts/build.js dist/Excalidraw.beatPlugin prod",
-    "install": "npm run build && install-plugin dist/Excalidraw.beatPlugin",
-    "refresh-dev": "node scripts/build.js dist/Excalidraw.beatPlugin dev && install-plugin dist/Excalidraw.beatPlugin",
+    "install": "npm run build && plugin install dist/Excalidraw.beatPlugin",
+    "refresh-dev": "node scripts/build.js dist/Excalidraw.beatPlugin dev && plugin install dist/Excalidraw.beatPlugin",
     "refresh-dev-ui": "node scripts/build.js dist/ui dev-ui",
     "dev": "npm run refresh-dev && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev'",
     "dev-ui": "npm run refresh-dev-ui && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev-ui' & serve dist/ui --no-clipboard",

@@ -1,0 +1,7 @@
+{
+  "name": "plugin-commands",
+  "description": "Utility commands for Beat plugin development",
+  "bin": {
+    "plugin": "index.js"
+  }
+}

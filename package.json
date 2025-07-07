@@ -1,17 +1,17 @@
 {
   "scripts": {
-    "install-plugin": "install-plugin",
+    "plugin": "plugin",
     "fmt-all": "prettier -w --ignore-path=.gitignore ."
   },
   "devDependencies": {
-    "chokidar-cli": "^3.0.0",
-    "install-plugin": "file:install-plugin",
     "@types/react": "^18.0.4",
     "@types/react-dom": "^18.0.0",
+    "chokidar-cli": "^3.0.0",
     "esbuild": "^0.25.5",
     "esbuild-plugin-alias": "^0.2.1",
     "esbuild-sass-plugin": "^3.3.1",
-    "serve": "^14.2.4",
-    "prettier": "^3.6.2"
+    "plugin-commands": "file:plugin-commands",
+    "prettier": "^3.6.2",
+    "serve": "^14.2.4"
   }
 }

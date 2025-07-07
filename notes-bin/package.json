@@ -1,8 +1,8 @@
 {
   "scripts": {
     "build": "node scripts/build.js 'dist/Notes Bin.beatPlugin' prod",
-    "install": "npm run build && install-plugin 'dist/Notes Bin.beatPlugin'",
-    "refresh-dev": "node scripts/build.js 'dist/Notes Bin.beatPlugin' dev && install-plugin 'dist/Notes Bin.beatPlugin'",
+    "install": "npm run build && plugin install 'dist/Notes Bin.beatPlugin'",
+    "refresh-dev": "node scripts/build.js 'dist/Notes Bin.beatPlugin' dev && plugin install 'dist/Notes Bin.beatPlugin'",
     "refresh-dev-ui": "node scripts/build.js dist/ui dev-ui",
     "dev": "npm run refresh-dev && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev'",
     "dev-ui": "npm run refresh-dev-ui && chokidar 'src/**' 'public/**' -c 'npm run refresh-dev-ui' & serve dist/ui --no-clipboard",

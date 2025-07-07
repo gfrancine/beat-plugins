@@ -16,7 +16,7 @@ However, some plugins aren't available or haven't been updated yet in the Plugin
 
 As the workspace is set up with the `npm` package manager, NodeJS is required to maintain and build most of the plugins.
 
-Most of the plugins use the `install-plugin` command line utility (also found in this repository), which copies local plugins directly into Beat.
+Most of the plugins use the `plugin-commands` command line utility (also found in this repository), which has useful commands such as installing local plugins directly into Beat.
 
 Make sure to install all the root-level packages when developing.
 
