@@ -394,6 +394,10 @@ body {
               background-color: inherit;
             }
 
+            .cm-scroller * {
+              cursor: text;
+            }
+
             .cm-content {
               min-height: 8.5em;
             }
