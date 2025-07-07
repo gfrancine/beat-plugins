@@ -2,15 +2,16 @@
 
 /* Variables */
 
-$size-space: 0.4rem;
+$size-space-small: 0.4rem;
+$size-space-normal: 0.8rem;
 $size-corner: 0.2rem;
 $size-border: 1.2pt;
-$size-scrollbar: 1rem;
+$size-scrollbar: 0.8rem;
 $size-input: 2.2rem;
 
 .app[data-theme="dark"] {
   --bg: #{$tw-neutral-900};
-  --fg: #{$tw-neutral-100};
+  --fg: #{$tw-neutral-200};
   --fg-secondary: #{$tw-neutral-500};
   --accent: #{$tw-blue-500};
   --border: #{$tw-neutral-600};
@@ -19,7 +20,7 @@ $size-input: 2.2rem;
   // --pseudos-filter: invert(1);
   --elevated-bg: #{$tw-neutral-800};
   --elevated-bg-hover: #{$tw-neutral-700};
-  --elevated-fg: #{$tw-neutral-100};
+  --elevated-fg: #{$tw-neutral-200};
   --elevated-fg-secondary: #{$tw-neutral-400};
   --elevated-fg-placeholder: #{$tw-neutral-500};
   --button-bg: #{$tw-blue-500};
@@ -27,7 +28,7 @@ $size-input: 2.2rem;
   --button-fg: white;
   --button-secondary-bg: #{$tw-neutral-700};
   --button-secondary-bg-hover: #{$tw-neutral-600};
-  --button-secondary-fg: #{$tw-neutral-100};
+  --button-secondary-fg: #{$tw-neutral-200};
 }
 
 .app[data-theme="light"] {
@@ -71,7 +72,7 @@ $border-accent: solid $size-border var(--accent);
 @mixin button-base {
   border-radius: $size-corner;
   border: 0;
-  padding: $size-space;
+  padding: $size-space-small;
   cursor: pointer;
   user-select: none;
   height: $size-input;
@@ -138,6 +139,7 @@ $border-accent: solid $size-border var(--accent);
 #root,
 body {
   font-size: 9pt;
+  line-height: 1.35;
   height: 100%;
   padding: 0;
   margin: 0;
@@ -162,6 +164,7 @@ body {
   // https://stackoverflow.com/a/67902128
   // https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
   scrollbar-color: var(--scrollbar) transparent;
+  scrollbar-width: thin;
 
   ::-webkit-scrollbar {
     background: transparent;
@@ -188,11 +191,11 @@ body {
   }
 
   .header {
-    padding: $size-space;
+    padding: $size-space-small;
 
     .title {
       font-size: larger;
-      margin: $size-space 0;
+      margin: $size-space-small 0;
       user-select: none;
     }
 
@@ -200,11 +203,11 @@ body {
       width: 100%;
       display: flex;
       flex-direction: row;
-      gap: $size-space;
+      gap: $size-space-small;
 
       input,
       button {
-        padding: $size-space;
+        padding: $size-space-small;
         @include inherit-typography;
       }
 
@@ -219,6 +222,7 @@ body {
 
       .search {
         flex: 1;
+        min-width: 0;
         border-radius: $size-corner;
         border: $border;
         cursor: text;
@@ -242,7 +246,8 @@ body {
   .notes {
     flex: 1;
     height: 100%;
-    padding: $size-space;
+    padding: $size-space-small;
+    padding-top: 0;
     overflow-x: hidden;
 
     .placeholder {
@@ -264,7 +269,7 @@ body {
       list-style: none;
 
       .note-dnd-item {
-        padding: calc($size-space/2) 0;
+        padding: calc($size-space-small/2) 0;
         background: transparent;
 
         &.above {
@@ -311,8 +316,8 @@ body {
             flex-direction: row;
             position: absolute;
             width: fit-content;
-            right: $size-space;
-            top: $size-space;
+            right: $size-space-small;
+            top: $size-space-small;
             opacity: 0;
 
             button {
@@ -343,13 +348,12 @@ body {
             width: 100%;
             min-height: 8.5em;
             height: 8.5em;
-            padding: $size-space * 1.5;
+            padding: $size-space-normal;
+            margin: 0;
           }
 
           .text-display {
-            padding: $size-space * 1.5;
             overflow: hidden;
-            margin: 0;
             user-select: none;
             cursor: inherit;
             color: var(--elevated-fg-secondary);
@@ -366,9 +370,9 @@ body {
           .text-editor {
             color: var(--elevated-fg);
             // height: 40em;
-            // height: calc(100vh - $size-input - $size-space * 5);
-            // height: min(40em, calc(100vh - $size-input - $size-space * 5));
-            font-size: 9.5pt;
+            // height: calc(100vh - $size-input - $size-space-small * 5);
+            // height: min(40em, calc(100vh - $size-input - $size-space-small * 5));
+            font-size: 10pt;
             user-select: all;
             resize: none;
             overflow: hidden;
