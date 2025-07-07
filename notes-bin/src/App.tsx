@@ -15,7 +15,7 @@ import {
   ImportIcon,
 } from "./Icons";
 import { useDebouncedCallback } from "use-debounce";
-import TextareaAutosize from "react-textarea-autosize";
+import Editor from "./Editor";
 
 const NoteDndContext = createContext<{
   targetIndex: null | number;
@@ -206,7 +206,6 @@ function Note({
 }) {
   const [internalContents, setInternalContent] = useState(note.contents);
   const [isEditing, setIsEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const saveNote = () => {
     const newNote = { ...note };
@@ -220,15 +219,6 @@ function Note({
     trailing: true,
   });
 
-  // focus textarea on edit
-  useEffect(() => {
-    if (textareaRef.current && isEditing) {
-      textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(0, 0);
-      textareaRef.current.scrollIntoView();
-    }
-  }, [isEditing]);
-
   return hidden ? (
     <></>
   ) : (
@@ -238,7 +228,7 @@ function Note({
       allowDrag={!isEditing}
       getNoteContents={() => internalContents}
     >
-      <button
+      <div
         className="note"
         onDoubleClick={() => {
           if (!isEditing) setIsEditing(true);
@@ -260,20 +250,28 @@ function Note({
           )}
         </div>
         {isEditing ? (
-          <TextareaAutosize
-            className="text-editor"
-            value={internalContents}
-            ref={textareaRef}
-            onChange={(e) => {
-              setInternalContent(e.target.value);
-              debouncedSaveNote();
-            }}
-            placeholder="Note..."
-            onBlur={() => {
-              saveNote();
-              setIsEditing(false);
-            }}
-          />
+          <div className="text-editor">
+            <Editor
+              value={internalContents}
+              onChange={(value) => {
+                setInternalContent(value);
+                debouncedSaveNote();
+              }}
+              placeholder="Note..."
+              htmlProps={{
+                onBlur: () => {
+                  saveNote();
+                  setIsEditing(false);
+                },
+              }}
+              // textColor="var(--elevated-fg)"
+              //selectionBackground=""
+              cursorColor="var(--accent)"
+              cursorWidth="2px"
+              selectionBackground="var(--accent)"
+              selectionUnfocusedBackground="var(--elevated-fg)"
+            />
+          </div>
         ) : (
           <pre
             className={
@@ -283,7 +281,7 @@ function Note({
             {internalContents.length === 0 ? "Note..." : internalContents}
           </pre>
         )}
-      </button>
+      </div>
     </NoteDndItem>
   );
 }

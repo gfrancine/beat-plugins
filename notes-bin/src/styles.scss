@@ -347,7 +347,6 @@ body {
 
             width: 100%;
             min-height: 8.5em;
-            height: 8.5em;
             padding: $size-space-normal;
             margin: 0;
           }
@@ -355,6 +354,7 @@ body {
           .text-display {
             overflow: hidden;
             user-select: none;
+            height: 8.5em;
             cursor: inherit;
             color: var(--elevated-fg-secondary);
 
@@ -378,7 +378,8 @@ body {
             overflow: hidden;
             cursor: text;
 
-            &:focus {
+            // &:focus {
+            &:has(.cm-focused) {
               outline: $border-accent;
             }
 
@@ -391,6 +392,10 @@ body {
               background: url("./images/icon-expand16.svg") no-repeat 50% 50%;
               background-size: contain;
               background-color: inherit;
+            }
+
+            .cm-content {
+              min-height: 8.5em;
             }
           }
         }

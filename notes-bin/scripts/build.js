@@ -1,6 +1,6 @@
 const esbuild = require("esbuild");
 const { sassPlugin } = require("esbuild-sass-plugin");
-const alias = require("esbuild-plugin-alias");
+// const alias = require("esbuild-plugin-alias");
 
 const path = require("path");
 const fs = require("fs");
@@ -33,11 +33,14 @@ const MODE = process.argv[3];
     external: ["./images/*"],
     plugins: [
       sassPlugin(),
+      /*
       alias({
         react: require.resolve("preact/compat"),
+        "react/react-jsx-runtime": require.resolve("preact/compat"),
         "react-dom": require.resolve("preact/compat"),
         "react-dom/client": require.resolve("preact/compat/client"),
       }),
+      */
     ],
   });
 
