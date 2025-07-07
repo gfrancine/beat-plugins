@@ -10,6 +10,7 @@ A Highland 2-like container for storing and organizing your notes in snippets.
   <li>Import and export to text (<code>.txt</code>) files</li>
   <li>Text search</li>
   <li>Cut or copy directly from selection</li>
+  <li>Edit notes in Markdown</li>
 </ul>
 <h2>Shortcuts</h2>
 <ul>
