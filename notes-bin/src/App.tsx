@@ -224,6 +224,7 @@ function Note({
     if (textareaRef.current && isEditing) {
       textareaRef.current.focus();
       textareaRef.current.setSelectionRange(0, 0);
+      textareaRef.current.scrollIntoView();
     }
   }, [isEditing]);
 
