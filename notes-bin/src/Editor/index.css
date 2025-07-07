@@ -1,0 +1,21 @@
+.cm-focused {
+  outline: none !important;
+}
+
+/*
+
+.cm-editor {
+color: inherit;
+background-color: transparent;
+}
+
+
+.cm-scroller {
+  font: inherit !important;
+}
+
+.cm-cursor {
+  border-left: solid 2px white !important;
+}
+
+*/
