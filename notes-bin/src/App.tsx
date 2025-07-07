@@ -252,6 +252,7 @@ function Note({
         {isEditing ? (
           <div className="text-editor">
             <Editor
+              focusOnMount
               value={internalContents}
               onChange={(value) => {
                 setInternalContent(value);

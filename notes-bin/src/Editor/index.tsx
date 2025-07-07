@@ -1,5 +1,5 @@
-import React from "react";
-import ReactCodeEditor from "@uiw/react-codemirror";
+import React, { useEffect, useRef } from "react";
+import ReactCodeEditor, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
 import { markdown } from "@codemirror/lang-markdown";
 import { syntaxHighlighting, HighlightStyle } from "@codemirror/language";
@@ -63,6 +63,7 @@ const extensions = [
 export default function Editor({
   value,
   onChange,
+  focusOnMount,
   theme,
   placeholder,
   textColor = "inherit",
@@ -78,6 +79,7 @@ export default function Editor({
 }: {
   value?: string;
   onChange?: (value: string) => unknown;
+  focusOnMount?: boolean;
   placeholder?: string;
   textColor?: string;
   fontFamily?: string;
@@ -95,9 +97,21 @@ export default function Editor({
   >;
 }) {
   // https://uiwjs.github.io/react-codemirror/#/
+
+  const editorRef = useRef<ReactCodeMirrorRef>(null);
+
+  useEffect(() => {
+    if (focusOnMount) {
+      setTimeout(() => {
+        if (editorRef.current) editorRef.current.view?.focus();
+      }, 50); // small delay before the EditorView is present in the ref
+    }
+  }, []);
+
   return (
     <ReactCodeEditor
       {...htmlProps}
+      ref={editorRef}
       extensions={[
         ...extensions,
         EditorView.theme(
