@@ -104,10 +104,20 @@ Beat.custom = {
   promptImportFile: () => {
     Beat.openFile(["txt"], (path) => {
       if (!path || path.length <= 0) return;
-      const contents = Beat.fileToString(path);
-      htmlWindow.runJS(
-        `PluginGlobals.onPromptImportFileResult(${JSON.stringify(contents)})`,
+
+      // irreversible, there's no way access to the Beat undo history
+      // TODO: move this to a dialog on the UI side / within the App component
+      const confirmation = Beat.confirm(
+        "Notes Bin: Import file",
+        "WARNING: The current bin will be overwritten. This action cannot be undone. Would you like to continue?",
       );
+
+      if (confirmation) {
+        const contents = Beat.fileToString(path);
+        htmlWindow.runJS(
+          `PluginGlobals.onPromptImportFileResult(${JSON.stringify(contents)})`,
+        );
+      }
     });
   },
 };
