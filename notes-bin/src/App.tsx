@@ -15,6 +15,7 @@ import {
   ImportIcon,
 } from "./Icons";
 import { useDebouncedCallback } from "use-debounce";
+import TextareaAutosize from "react-textarea-autosize";
 
 const NoteDndContext = createContext<{
   targetIndex: null | number;
@@ -259,7 +260,7 @@ function Note({
           )}
         </div>
         {isEditing ? (
-          <textarea
+          <TextareaAutosize
             className="text-editor"
             value={internalContents}
             ref={textareaRef}

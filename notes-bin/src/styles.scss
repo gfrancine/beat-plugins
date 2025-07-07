@@ -365,13 +365,13 @@ body {
 
           .text-editor {
             color: var(--elevated-fg);
-            height: 
-              // 40em;
-              calc(100vh - $size-input - $size-space * 5);
-            // min(40em, calc(100vh - $size-input - $size-space * 5));
+            // height: 40em;
+            // height: calc(100vh - $size-input - $size-space * 5);
+            // height: min(40em, calc(100vh - $size-input - $size-space * 5));
             font-size: 9.5pt;
             user-select: all;
-            resize: vertical;
+            resize: none;
+            overflow: hidden;
             cursor: text;
 
             &:focus {
