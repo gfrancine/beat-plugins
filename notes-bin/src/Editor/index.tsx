@@ -38,25 +38,9 @@ const markdownHighlighting = HighlightStyle.define([
 
 type Theme = Record<string, Record<string, unknown>>;
 
-/* const theme: Theme = EditorView.theme({
-  "&": {
-    color: "inherit",
-    backgroundColor: "transparent",
-  },
-  ".cm-focused": {
-    outline: "none!important",
-  },
-  ".cm-scroller": {
-    fontFamily: "inherit",
-  },
-}, { dark }); */
-
 const extensions = [
   EditorView.lineWrapping,
-  // theme,
-  markdown({
-    // base: markdownLanguage, // GFM
-  }),
+  markdown(),
   syntaxHighlighting(markdownHighlighting),
 ];
 

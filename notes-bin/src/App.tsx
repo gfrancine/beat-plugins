@@ -62,22 +62,6 @@ function NoteDndItem({
         e.dataTransfer.setData("text/plain", getNoteContents());
         noteDndCtx.setDraggingIndex(index);
       }}
-      /* onDragEnd={(e) => {
-        // remove if drop was successful and outside of the drop zone?
-        if (noteDndCtx.listRef && noteDndCtx.listRef.current) {
-          const listRect = noteDndCtx.listRef.current.getBoundingClientRect();
-          if (
-            !(
-              e.clientY > listRect.y &&
-              e.clientY < listRect.y + listRect.height &&
-              e.clientX > listRect.x &&
-              e.clientX < listRect.x + listRect.width
-            )
-          ) {
-            // handle successful drop outside
-          }
-        }
-      }} */
     >
       {children}
     </li>
@@ -178,9 +162,7 @@ function NoteDndList({
                     targetIndex: Math.max(noteDndCtx.targetIndex, 0),
                   });
                 }
-              } catch {
-                // warn ?
-              }
+              } catch {}
             } else {
               // plaintext: create new note
               const textData = e.dataTransfer.getData("text/plain");
@@ -250,9 +232,6 @@ function Note({
       >
         <div className="note-topbar">
           {isEditing ? (
-            /*<button onClick={() => setIsEditing(false)}>
-              <CheckIcon />
-            </button>*/
             <></>
           ) : (
             <button
@@ -279,8 +258,6 @@ function Note({
                   setIsEditing(false);
                 },
               }}
-              // textColor="var(--elevated-fg)"
-              //selectionBackground=""
               cursorColor="var(--accent)"
               cursorWidth="2px"
               selectionBackground="var(--accent)"
@@ -348,8 +325,6 @@ export default function App({
   return (
     <div className="app" data-theme={internalBin.theme}>
       <div className="header">
-        {/* Remove for now
-        <h2 className="title">Notes Bin v{version}</h2> */}
         <div className="toolbar">
           <input
             className="search"

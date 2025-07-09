@@ -38,18 +38,6 @@ export function DeleteIcon() {
   );
 }
 
-export function CheckIcon() {
-  return (
-    <svg
-      className="icon"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 -960 960 960"
-    >
-      <path d="M400-301 240-461l51-51 109 109 269-269 51 51-320 320Z" />
-    </svg>
-  );
-}
-
 export function ExportIcon() {
   return (
     <svg

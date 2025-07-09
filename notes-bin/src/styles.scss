@@ -193,12 +193,6 @@ body {
   .header {
     padding: $size-space-small;
 
-    .title {
-      font-size: larger;
-      margin: $size-space-small 0;
-      user-select: none;
-    }
-
     .toolbar {
       width: 100%;
       display: flex;
@@ -289,8 +283,6 @@ body {
         .note {
           @include inherit-typography;
 
-          // border-radius: $size-corner;
-          // background: var(--elevated-bg);
           position: relative;
           user-select: none;
           cursor: pointer;
@@ -306,10 +298,6 @@ body {
           &:focus {
             outline: $border-accent;
           }
-
-          /* &:hover {
-          opacity: 70%;
-        } */
 
           .note-topbar {
             display: flex;
@@ -369,10 +357,6 @@ body {
 
           .text-editor {
             color: var(--elevated-fg);
-            // height: 40em;
-            // height: calc(100vh - $size-input - $size-space-small * 5);
-            // height: min(40em, calc(100vh - $size-input - $size-space-small * 5));
-            font-size: 10pt;
             user-select: all;
             resize: none;
             overflow: hidden;
