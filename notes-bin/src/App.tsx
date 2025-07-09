@@ -22,15 +22,13 @@ import Editor from "./Editor";
 type NoteDndCtx = {
   listRef: null | React.RefObject<HTMLElement>;
   targetIndex: null | number;
-  draggingIndex: null | number;
-  setDraggingIndex: (draggingIndex: number | null) => void;
+  targetOffset: "before" | "after";
 };
 
 const NoteDndContext = createContext<NoteDndCtx>({
-  targetIndex: null,
   listRef: null,
-  draggingIndex: null,
-  setDraggingIndex: () => {},
+  targetIndex: null,
+  targetOffset: "before",
 });
 
 // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
@@ -49,11 +47,11 @@ function NoteDndItem({
   const noteDndCtx = useContext(NoteDndContext);
 
   const dragoverPositionClass =
-    noteDndCtx.targetIndex === index - 1
-      ? "above"
-      : noteDndCtx.targetIndex === index
-        ? "under"
-        : "";
+    noteDndCtx.targetIndex === index
+      ? noteDndCtx.targetOffset === "before"
+        ? "above"
+        : "under"
+      : "";
 
   return (
     <li
@@ -62,10 +60,6 @@ function NoteDndItem({
       onDragStart={(e) => {
         e.dataTransfer.setData("application/json", JSON.stringify({ noteId }));
         e.dataTransfer.setData("text/plain", getNoteContents());
-        noteDndCtx.setDraggingIndex(index);
-      }}
-      onDragEnd={() => {
-        noteDndCtx.setDraggingIndex(null);
       }}
     >
       {children}
@@ -84,6 +78,7 @@ type NoteDropResult = (
     }
 ) & {
   targetIndex: number;
+  targetOffset: "before" | "after";
 };
 
 function NoteDndList({
@@ -100,13 +95,14 @@ function NoteDndList({
   const [noteDndCtx, setNoteDndCtx] = useState<NoteDndCtx>({
     listRef,
     targetIndex: null,
-    draggingIndex: null,
-    setDraggingIndex: (draggingIndex) =>
-      setNoteDndCtx({ ...noteDndCtx, draggingIndex }),
+    targetOffset: "before",
   });
 
-  function setTargetIndex(targetIndex: null | number) {
-    setNoteDndCtx({ ...noteDndCtx, targetIndex });
+  function setTarget(
+    targetIndex: null | number,
+    targetOffset: "before" | "after" = "before",
+  ) {
+    setNoteDndCtx({ ...noteDndCtx, targetIndex, targetOffset });
   }
 
   return (
@@ -116,13 +112,13 @@ function NoteDndList({
         ref={listRef as React.RefObject<HTMLUListElement>}
         onDragEnter={(e) => handleDragEnter?.(e)}
         onDragLeave={(e) => {
-          setTargetIndex(null);
+          setTarget(null);
           handleDragLeave?.(e);
         }}
         onDragOver={(e) => {
           if (e.dataTransfer.types.indexOf("text/plain") !== -1) {
             e.preventDefault();
-            setTargetIndex(-1);
+            setTarget(-1);
 
             if (listRef.current) {
               const dndItems =
@@ -134,16 +130,16 @@ function NoteDndList({
 
                 if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
                   if (e.clientY > rect.y + rect.height / 2) {
-                    setTargetIndex(i);
+                    setTarget(i, "after");
                   } else {
-                    setTargetIndex(i - 1);
+                    setTarget(i, "before");
                   }
                   break;
                 } else if (
                   i === dndItems.length - 1 && // last item
                   e.clientY > rect.y + rect.height / 2
                 ) {
-                  setTargetIndex(i);
+                  setTarget(i, "after");
                 }
               }
             }
@@ -162,7 +158,8 @@ function NoteDndList({
                   handleNoteDropResult?.({
                     type: "move",
                     id: data.noteId,
-                    targetIndex: Math.max(noteDndCtx.targetIndex, 0),
+                    targetIndex: noteDndCtx.targetIndex,
+                    targetOffset: noteDndCtx.targetOffset,
                   });
                 }
               } catch {}
@@ -175,13 +172,13 @@ function NoteDndList({
                   type: "create",
                   contents: textData,
                   targetIndex: noteDndCtx.targetIndex,
+                  targetOffset: noteDndCtx.targetOffset,
                 });
               }
             }
           }
 
-          setTargetIndex(null);
-          noteDndCtx.setDraggingIndex(null);
+          setTarget(null);
         }}
       >
         {children}
@@ -420,7 +417,8 @@ export default function App({
                 contents: result.contents,
               };
 
-              newNotes.splice(result.targetIndex, 0, newNote);
+              const offset = result.targetOffset === "after" ? 1 : 0;
+              newNotes.splice(result.targetIndex + offset, 0, newNote);
 
               handleTextDropSuccess?.(newNote);
             } else {
@@ -431,7 +429,10 @@ export default function App({
                   break;
                 }
               }
-              if (movingNoteIndex > -1) {
+              if (
+                movingNoteIndex > -1 &&
+                movingNoteIndex !== result.targetIndex
+              ) {
                 const [movingNote] = newNotes.splice(movingNoteIndex, 1);
                 newNotes.splice(result.targetIndex, 0, movingNote);
               }

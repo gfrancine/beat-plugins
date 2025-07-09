@@ -275,16 +275,9 @@ body {
         background: transparent;
 
         &.above {
-          border-top: solid calc($size-border/2) var(--accent);
-        }
-        &.under {
-          border-bottom: solid calc($size-border/2) var(--accent);
-        }
-
-        &:first-child.above {
           border-top: $border-accent;
         }
-        &:last-child.under {
+        &.under {
           border-bottom: $border-accent;
         }
 
