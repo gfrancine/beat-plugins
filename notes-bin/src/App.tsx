@@ -258,10 +258,12 @@ function Note({
                   setIsEditing(false);
                 },
               }}
-              cursorColor="var(--accent)"
-              cursorWidth="2px"
-              selectionBackground="var(--accent)"
-              selectionUnfocusedBackground="var(--elevated-fg)"
+              theme={{
+                cursorColor: "var(--accent)",
+                cursorWidth: "2px",
+                selectionBackground: "var(--accent)",
+                selectionUnfocusedBackground: "var(--elevated-fg)",
+              }}
             />
           </div>
         ) : (
