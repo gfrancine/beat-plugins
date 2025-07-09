@@ -5,7 +5,7 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import { Bin, BinNote, NoteDropResult } from "./types";
+import { Bin, BinNote } from "./types";
 import { nanoid } from "nanoid";
 import {
   DeleteIcon,
@@ -17,12 +17,18 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import Editor from "./Editor";
 
-const NoteDndContext = createContext<{
-  targetIndex: null | number;
+type NoteDndCtx = {
   listRef: null | React.RefObject<HTMLElement>;
-}>({
+  targetIndex: null | number;
+  draggingIndex: null | number;
+  setDraggingIndex: (draggingIndex: number | null) => void;
+};
+
+const NoteDndContext = createContext<NoteDndCtx>({
   targetIndex: null,
   listRef: null,
+  draggingIndex: null,
+  setDraggingIndex: () => {},
 });
 
 // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
@@ -41,23 +47,22 @@ function NoteDndItem({
   const noteDndCtx = useContext(NoteDndContext);
 
   const dragoverPositionClass =
-    noteDndCtx.targetIndex === index
+    noteDndCtx.targetIndex === index - 1
       ? "above"
-      : noteDndCtx.targetIndex === index + 1
+      : noteDndCtx.targetIndex === index
         ? "under"
         : "";
 
   return (
     <li
       className={"note-dnd-item " + dragoverPositionClass}
-      data-note-index={index}
       draggable={allowDrag === undefined ? true : allowDrag}
       onDragStart={(e) => {
         e.dataTransfer.setData("application/json", JSON.stringify({ noteId }));
         e.dataTransfer.setData("text/plain", getNoteContents());
+        noteDndCtx.setDraggingIndex(index);
       }}
-      onDragEnd={(_e) => {
-        /*
+      /* onDragEnd={(e) => {
         // remove if drop was successful and outside of the drop zone?
         if (noteDndCtx.listRef && noteDndCtx.listRef.current) {
           const listRect = noteDndCtx.listRef.current.getBoundingClientRect();
@@ -71,13 +76,26 @@ function NoteDndItem({
           ) {
             // handle successful drop outside
           }
-        } */
-      }}
+        }
+      }} */
     >
       {children}
     </li>
   );
 }
+
+type NoteDropResult = (
+  | {
+      type: "move";
+      id: string;
+    }
+  | {
+      type: "create";
+      contents: string;
+    }
+) & {
+  targetIndex: number;
+};
 
 function NoteDndList({
   children,
@@ -90,12 +108,12 @@ function NoteDndList({
   handleNoteDropResult?: (result: NoteDropResult) => unknown;
 } & React.PropsWithChildren) {
   const listRef = useRef<HTMLElement>(null);
-  const [noteDndCtx, setNoteDndCtx] = useState<{
-    targetIndex: null | number;
-    listRef: null | React.RefObject<HTMLElement>;
-  }>({
-    targetIndex: null,
+  const [noteDndCtx, setNoteDndCtx] = useState<NoteDndCtx>({
     listRef,
+    targetIndex: null,
+    draggingIndex: null,
+    setDraggingIndex: (draggingIndex) =>
+      setNoteDndCtx({ ...noteDndCtx, draggingIndex }),
   });
 
   function setTargetIndex(targetIndex: null | number) {
@@ -114,7 +132,7 @@ function NoteDndList({
         }}
         onDragOver={(e) => {
           e.preventDefault(); // accept drop
-          setTargetIndex(0);
+          setTargetIndex(-1);
 
           if (listRef.current) {
             const dndItems = listRef.current.querySelectorAll(".note-dnd-item");
@@ -122,15 +140,10 @@ function NoteDndList({
             for (let i = 0; i < dndItems.length; i++) {
               const dndItemElement = dndItems[i] as HTMLElement;
               const rect = dndItemElement.getBoundingClientRect();
+
               if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
-                const noteIndex = Number(
-                  dndItemElement.getAttribute("data-note-index"),
-                );
-                if (e.clientY > rect.y + rect.height) {
-                  setTargetIndex(noteIndex + 1);
-                } else {
-                  setTargetIndex(noteIndex);
-                }
+                setTargetIndex(i - 1);
+                break;
               }
             }
 
@@ -140,11 +153,8 @@ function NoteDndList({
 
             if (lastDndItem) {
               const rect = lastDndItem.getBoundingClientRect();
-              const noteIndex = Number(
-                lastDndItem.getAttribute("data-note-index"),
-              );
               if (e.clientY > rect.y + rect.height / 2) {
-                setTargetIndex(noteIndex + 1);
+                setTargetIndex(dndItems.length - 1);
               }
             }
           }
@@ -163,7 +173,7 @@ function NoteDndList({
                   handleNoteDropResult({
                     type: "move",
                     id: data.noteId,
-                    targetIndex: noteDndCtx.targetIndex,
+                    targetIndex: Math.max(noteDndCtx.targetIndex, 0),
                   });
                 }
               } catch {
@@ -183,6 +193,7 @@ function NoteDndList({
           }
 
           setTargetIndex(null);
+          noteDndCtx.setDraggingIndex(null);
         }}
       >
         {children}

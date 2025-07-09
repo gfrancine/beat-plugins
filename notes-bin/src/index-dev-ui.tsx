@@ -4,8 +4,15 @@ import App from "./App";
 import { Bin } from "./types";
 import "./styles.scss";
 
-const APP_VERSION = "0.1.0";
-const DEFAULT_BIN: Bin = { theme: "dark", notes: [] };
+const DEFAULT_BIN: Bin = {
+  theme: "dark",
+  notes: [
+    { id: "1", contents: "1" },
+    { id: "2", contents: "3" },
+    { id: "3", contents: "2" },
+    { id: "4", contents: "4" },
+  ],
+};
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
