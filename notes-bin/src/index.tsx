@@ -17,19 +17,13 @@ function promisifyCallback<U>(callback: () => U): () => Promise<U> {
 
 // Data loading
 
-function migrateData(data: Partial<Bin> = {}): Bin {
-  if (!data.notes) data.notes = [];
-  if (!data.theme) data.theme = "dark";
-  return data as Bin;
-}
-
 async function fetchData() {
   const data = await promisifyCallback(() => {
     const data = Beat.getDocumentSetting("data");
     if (data) return JSON.parse(data);
   })();
 
-  return migrateData(data as Partial<Bin> | undefined);
+  return data || ({} as Partial<Bin>);
 }
 
 function persistData(bin: Bin) {
@@ -77,7 +71,7 @@ PluginGlobals.onPromptImportFileResult = function (contents: string) {
     .split(TXT_SEPARATOR)
     .map((contents) => ({ id: nanoid(), contents }));
 
-  const bin: Bin = migrateData({ notes });
+  const bin = { notes };
   renderApp(bin);
 };
 
@@ -170,7 +164,7 @@ PluginGlobals.onCopyToBin = async () => {
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
 
-function renderApp(bin: Bin) {
+function renderApp(bin: Partial<Bin>) {
   root.render(
     <App
       bin={bin}

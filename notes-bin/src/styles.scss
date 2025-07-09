@@ -2,12 +2,19 @@
 
 /* Variables */
 
-$size-space-small: 0.4rem;
-$size-space-normal: 0.8rem;
+:root {
+  --size-font: 9pt;
+}
+
+// TODO: use calc() and move UI sizing to .app ?
+$size-space-small: 0.2rem;
+$size-space-normal: 0.4rem;
+$size-space-large: 0.8rem;
 $size-corner: 0.2rem;
 $size-border: 1.2pt;
 $size-scrollbar: 0.8rem;
 $size-input: 2.2rem;
+$size-font-editor: 1.111rem; // 10pt / 9pt
 
 .app[data-theme="dark"] {
   --bg: #{$tw-neutral-900};
@@ -72,7 +79,7 @@ $border-accent: solid $size-border var(--accent);
 @mixin button-base {
   border-radius: $size-corner;
   border: 0;
-  padding: $size-space-small;
+  padding: $size-space-normal;
   cursor: pointer;
   user-select: none;
   height: $size-input;
@@ -126,6 +133,7 @@ $border-accent: solid $size-border var(--accent);
 
 .button-transparent {
   @include button-base;
+  padding: $size-space-small;
   background: transparent;
 
   &:hover {
@@ -138,7 +146,7 @@ $border-accent: solid $size-border var(--accent);
 :root,
 #root,
 body {
-  font-size: 9pt;
+  font-size: var(--size-font);
   line-height: 1.35;
   height: 100%;
   padding: 0;
@@ -191,17 +199,17 @@ body {
   }
 
   .header {
-    padding: $size-space-small;
+    padding: $size-space-normal;
 
     .toolbar {
       width: 100%;
       display: flex;
       flex-direction: row;
-      gap: $size-space-small;
+      gap: $size-space-normal;
 
       input,
       button {
-        padding: $size-space-small;
+        padding: $size-space-normal;
         @include inherit-typography;
       }
 
@@ -240,7 +248,7 @@ body {
   .notes {
     flex: 1;
     height: 100%;
-    padding: $size-space-small;
+    padding: $size-space-normal;
     padding-top: 0;
     overflow-x: hidden;
 
@@ -263,7 +271,7 @@ body {
       list-style: none;
 
       .note-dnd-item {
-        padding: calc($size-space-small/2) 0;
+        padding: calc($size-space-normal/2) 0;
         background: transparent;
 
         &.above {
@@ -304,19 +312,12 @@ body {
             flex-direction: row;
             position: absolute;
             width: fit-content;
-            right: $size-space-small;
-            top: $size-space-small;
+            right: $size-space-normal;
+            top: $size-space-normal;
             opacity: 0;
 
-            button {
-              height: $size-input;
-              width: $size-input;
-
-              .icon {
-                width: 100%;
-                height: 100%;
-                fill: var(--elevated-fg);
-              }
+            .button-transparent .icon {
+              fill: var(--elevated-fg);
             }
           }
 
@@ -327,7 +328,6 @@ body {
           .text-display,
           .text-editor {
             border-radius: $size-corner;
-
             background: var(--elevated-bg);
             border: $border;
 
@@ -335,7 +335,7 @@ body {
 
             width: 100%;
             min-height: 8.5em;
-            padding: $size-space-normal;
+            padding: $size-space-large;
             margin: 0;
           }
 
@@ -345,6 +345,7 @@ body {
             height: 8.5em;
             cursor: inherit;
             color: var(--elevated-fg-secondary);
+            word-wrap: break-word;
 
             &.empty {
               color: var(--elevated-fg-placeholder);
@@ -357,12 +358,12 @@ body {
 
           .text-editor {
             color: var(--elevated-fg);
+            font-size: $size-font-editor;
             user-select: all;
             resize: none;
             overflow: hidden;
             cursor: text;
 
-            // &:focus {
             &:has(.cm-focused) {
               outline: $border-accent;
             }
@@ -388,6 +389,18 @@ body {
           }
         }
       }
+    }
+  }
+
+  .zoom-toolbar {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    bottom: $size-space-normal;
+    right: $size-space-normal;
+
+    .button-transparent .icon {
+      fill: var(--fg);
     }
   }
 }

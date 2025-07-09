@@ -4,8 +4,9 @@ import App from "./App";
 import { Bin } from "./types";
 import "./styles.scss";
 
-const DEFAULT_BIN: Bin = {
+const DEFAULT_BIN: Partial<Bin> = {
   theme: "dark",
+  fontSizePt: 9,
   notes: [
     { id: "1", contents: "1" },
     { id: "2", contents: "3" },
@@ -17,7 +18,7 @@ const DEFAULT_BIN: Bin = {
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
 
-function renderApp(bin: Bin) {
+function renderApp(bin: Partial<Bin>) {
   root.render(
     <App
       bin={bin}

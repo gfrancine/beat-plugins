@@ -13,6 +13,8 @@ import {
   LightDarkIcon,
   ExportIcon,
   ImportIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
 } from "./Icons";
 import { useDebouncedCallback } from "use-debounce";
 import Editor from "./Editor";
@@ -281,8 +283,14 @@ function Note({
   );
 }
 
+// Default values
+function migrateBin(bin: Partial<Bin> = {}): Bin {
+  const { notes = [], theme = "dark", fontSizePt = 9 } = bin;
+  return { notes: [...notes], theme, fontSizePt }; // todo: deep copy?
+}
+
 export default function App({
-  bin,
+  bin = {},
   handleBinUpdate,
   handleExport,
   handleImport,
@@ -290,7 +298,7 @@ export default function App({
   handleDragLeave,
   handleTextDropSuccess,
 }: {
-  bin: Bin;
+  bin?: Partial<Bin>;
   handleBinUpdate?: (bin: Bin) => unknown;
   handleExport?: (bin: Bin) => unknown;
   // expect the app to be re-rendered with a new "bin" prop
@@ -309,12 +317,13 @@ export default function App({
   */
   // handleDragOutSuccess?: () => unknown;
 }) {
-  const [internalBin, setInternalBin] = useState<Bin>(bin);
+  const [internalBin, setInternalBin] = useState<Bin>(migrateBin(bin));
   const [searchQuery, setSearchQuery] = useState("");
 
   // handle external updates / rerenders
+  // todo: is this even needed?
   useEffect(() => {
-    setInternalBin(bin);
+    setInternalBin(migrateBin(bin));
   }, [bin]);
 
   useEffect(() => {
@@ -323,6 +332,24 @@ export default function App({
 
   const setTheme = (theme: Bin["theme"]) => {
     setInternalBin({ ...internalBin, theme });
+  };
+
+  // UI text size
+
+  const FONT_SIZE_INCREMENT = 0.5;
+
+  useEffect(() => {
+    (document.querySelector(":root") as HTMLElement).style.setProperty(
+      "--size-font",
+      internalBin.fontSizePt + "pt",
+    );
+  }, [internalBin.fontSizePt]);
+
+  const setFontSize = (fontSizePt: number) => {
+    setInternalBin({
+      ...internalBin,
+      fontSizePt: Math.min(Math.max(fontSizePt, 7), 14),
+    });
   };
 
   return (
@@ -460,6 +487,25 @@ export default function App({
             ))
           )}
         </NoteDndList>
+      </div>
+      <div className="zoom-toolbar">
+        {/* TODO: handle keyboard shortcuts with event emitter? */}
+        <button
+          className="button-transparent"
+          onClick={() =>
+            setFontSize(internalBin.fontSizePt - FONT_SIZE_INCREMENT)
+          }
+        >
+          <ZoomOutIcon />
+        </button>
+        <button
+          className="button-transparent"
+          onClick={() =>
+            setFontSize(internalBin.fontSizePt + FONT_SIZE_INCREMENT)
+          }
+        >
+          <ZoomInIcon />
+        </button>
       </div>
     </div>
   );
