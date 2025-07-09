@@ -62,6 +62,9 @@ function NoteDndItem({
         e.dataTransfer.setData("text/plain", getNoteContents());
         noteDndCtx.setDraggingIndex(index);
       }}
+      onDragEnd={() => {
+        noteDndCtx.setDraggingIndex(null);
+      }}
     >
       {children}
     </li>
@@ -128,19 +131,17 @@ function NoteDndList({
                 const rect = dndItemElement.getBoundingClientRect();
 
                 if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
-                  setTargetIndex(i - 1);
+                  if (e.clientY > rect.y + rect.height / 2) {
+                    setTargetIndex(i);
+                  } else {
+                    setTargetIndex(i - 1);
+                  }
                   break;
-                }
-              }
-
-              const lastDndItem = dndItems[dndItems.length - 1] as
-                | HTMLElement
-                | undefined;
-
-              if (lastDndItem) {
-                const rect = lastDndItem.getBoundingClientRect();
-                if (e.clientY > rect.y + rect.height / 2) {
-                  setTargetIndex(dndItems.length - 1);
+                } else if (
+                  i === dndItems.length - 1 && // last item
+                  e.clientY > rect.y + rect.height / 2
+                ) {
+                  setTargetIndex(i);
                 }
               }
             }
