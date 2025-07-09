@@ -24,13 +24,18 @@ const MODE = process.argv[3];
 
   await esbuild.build({
     entryPoints: [MODE === "dev-ui" ? "src/index-dev-ui.tsx" : "src/index.tsx"],
-    conditions: [MODE === "prod" ? "production" : "development"],
+    conditions: [MODE === "dev-ui" ? "development" : "production"],
+    define: {
+      "process.env.NODE_ENV":
+        MODE == "dev-ui" ? '"development"' : '"production"',
+    },
     bundle: true,
-    minify: MODE === "prod" || MODE === "dev",
+    minify: MODE !== "dev-ui",
     sourcemap: MODE === "dev-ui",
     outfile: path.join(DIST_PATH, "bundle.js"),
     tsconfig: emptyTsconfigPath,
     external: ["./images/*"],
+
     plugins: [
       sassPlugin(),
       /*

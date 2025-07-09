@@ -27,7 +27,11 @@ const MODE = process.argv[3];
 
   await esbuild.build({
     entryPoints: [MODE === "dev-ui" ? "src/index-dev-ui.tsx" : "src/index.tsx"],
-    conditions: [MODE === "prod" ? "production" : "development"],
+    conditions: [MODE === "dev-ui" ? "development" : "production"],
+    define: {
+      "process.env.NODE_ENV":
+        MODE == "dev-ui" ? '"development"' : '"production"',
+    },
     bundle: true,
     minify: true,
     sourcemap: MODE === "dev-ui",
