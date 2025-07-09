@@ -131,38 +131,39 @@ function NoteDndList({
           handleDragLeave?.(e);
         }}
         onDragOver={(e) => {
-          e.preventDefault(); // accept drop
-          setTargetIndex(-1);
+          if (e.dataTransfer.types.indexOf("text/plain") !== -1) {
+            e.preventDefault();
+            setTargetIndex(-1);
 
-          if (listRef.current) {
-            const dndItems = listRef.current.querySelectorAll(".note-dnd-item");
+            if (listRef.current) {
+              const dndItems =
+                listRef.current.querySelectorAll(".note-dnd-item");
 
-            for (let i = 0; i < dndItems.length; i++) {
-              const dndItemElement = dndItems[i] as HTMLElement;
-              const rect = dndItemElement.getBoundingClientRect();
+              for (let i = 0; i < dndItems.length; i++) {
+                const dndItemElement = dndItems[i] as HTMLElement;
+                const rect = dndItemElement.getBoundingClientRect();
 
-              if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
-                setTargetIndex(i - 1);
-                break;
+                if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
+                  setTargetIndex(i - 1);
+                  break;
+                }
               }
-            }
 
-            const lastDndItem = dndItems[dndItems.length - 1] as
-              | HTMLElement
-              | undefined;
+              const lastDndItem = dndItems[dndItems.length - 1] as
+                | HTMLElement
+                | undefined;
 
-            if (lastDndItem) {
-              const rect = lastDndItem.getBoundingClientRect();
-              if (e.clientY > rect.y + rect.height / 2) {
-                setTargetIndex(dndItems.length - 1);
+              if (lastDndItem) {
+                const rect = lastDndItem.getBoundingClientRect();
+                if (e.clientY > rect.y + rect.height / 2) {
+                  setTargetIndex(dndItems.length - 1);
+                }
               }
             }
           }
         }}
         onDrop={(e) => {
-          e.preventDefault();
-
-          if (handleNoteDropResult && noteDndCtx.targetIndex !== null) {
+          if (noteDndCtx.targetIndex !== null) {
             // existing note: move it up/down
             const jsonData = e.dataTransfer.getData("application/json");
 
@@ -170,7 +171,8 @@ function NoteDndList({
               try {
                 const data = JSON.parse(jsonData);
                 if (typeof data === "object" && data.noteId) {
-                  handleNoteDropResult({
+                  e.preventDefault();
+                  handleNoteDropResult?.({
                     type: "move",
                     id: data.noteId,
                     targetIndex: Math.max(noteDndCtx.targetIndex, 0),
@@ -183,7 +185,8 @@ function NoteDndList({
               // plaintext: create new note
               const textData = e.dataTransfer.getData("text/plain");
               if (textData) {
-                handleNoteDropResult({
+                e.preventDefault();
+                handleNoteDropResult?.({
                   type: "create",
                   contents: textData,
                   targetIndex: noteDndCtx.targetIndex,
