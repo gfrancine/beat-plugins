@@ -1,7 +1,7 @@
 /*
 
 Plugin name: Notes Bin
-Version: 0.1.1
+Version: 0.2.0
 Copyright: 2025 gfrancine
 Image: Notes Bin.png
 
@@ -26,7 +26,7 @@ Image: Notes Bin.png
 
 */
 
-const APP_VERSION = "0.1.1";
+const APP_VERSION = "0.2.0";
 
 // Window
 
