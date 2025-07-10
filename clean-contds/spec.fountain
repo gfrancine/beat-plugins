@@ -328,3 +328,37 @@ dual dialogue
 
 BOB
 dialogue
+
+.REMOVE (CONT'D)'s: IT REMOVES ALL (CONT'D)'s
+
+ALICE
+dialogue
+
+ALICE    (CONT'D)
+dialogue
+
+ALICE     (CONT'D)
+dual dialogue
+
+BOB       (cont'd)   ^
+dual dialogue
+
+BOB   (CONT'D)
+dialogue
+
+.EXPECTED:
+
+ALICE
+dialogue
+
+ALICE
+dialogue
+
+ALICE
+dual dialogue
+
+BOB^
+dual dialogue
+
+BOB
+dialogue

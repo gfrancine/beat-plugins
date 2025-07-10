@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "install": "plugin install \"Clean (CONT'D)'s.beatPlugin\""
+    "install": "plugin install \"Clean (CONT'D)'s.beatPlugin\"",
+    "fmt": "cd .. && npm run fmt-all"
   }
 }
