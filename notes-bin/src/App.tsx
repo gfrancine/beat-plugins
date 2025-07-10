@@ -56,6 +56,7 @@ function NoteDndItem({
   return (
     <li
       className={"note-dnd-item " + dragoverPositionClass}
+      data-index={index} // preserve index position when a filter/search is applied
       draggable={allowDrag === undefined ? true : allowDrag}
       onDragStart={(e) => {
         e.dataTransfer.setData("application/json", JSON.stringify({ noteId }));
@@ -127,19 +128,22 @@ function NoteDndList({
               for (let i = 0; i < dndItems.length; i++) {
                 const dndItemElement = dndItems[i] as HTMLElement;
                 const rect = dndItemElement.getBoundingClientRect();
+                const noteIndex = Number(
+                  dndItemElement.getAttribute("data-index"),
+                );
 
                 if (e.clientY > rect.y && e.clientY < rect.y + rect.height) {
                   if (e.clientY > rect.y + rect.height / 2) {
-                    setTarget(i, "after");
+                    setTarget(noteIndex, "after");
                   } else {
-                    setTarget(i, "before");
+                    setTarget(noteIndex, "before");
                   }
                   break;
                 } else if (
                   i === dndItems.length - 1 && // last item
                   e.clientY > rect.y + rect.height / 2
                 ) {
-                  setTarget(i, "after");
+                  setTarget(noteIndex, "after");
                 }
               }
             }
