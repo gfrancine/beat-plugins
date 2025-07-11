@@ -414,6 +414,7 @@ export default function App({
           handleDragLeave={handleDragLeave}
           handleNoteDropResult={(result) => {
             const newNotes = [...internalBin.notes];
+            const offset = result.targetOffset === "after" ? 1 : 0;
 
             if (result.type == "create") {
               const newNote: BinNote = {
@@ -421,11 +422,10 @@ export default function App({
                 contents: result.contents,
               };
 
-              const offset = result.targetOffset === "after" ? 1 : 0;
               newNotes.splice(result.targetIndex + offset, 0, newNote);
-
               handleTextDropSuccess?.(newNote);
             } else {
+              // find the moving note
               let movingNoteIndex = -1;
               for (let i = 0; i < newNotes.length; i++) {
                 if (newNotes[i].id == result.id) {
@@ -437,8 +437,13 @@ export default function App({
                 movingNoteIndex > -1 &&
                 movingNoteIndex !== result.targetIndex
               ) {
+                const targetNote = newNotes[result.targetIndex];
                 const [movingNote] = newNotes.splice(movingNoteIndex, 1);
-                newNotes.splice(result.targetIndex, 0, movingNote);
+                newNotes.splice(
+                  newNotes.indexOf(targetNote) + offset,
+                  0,
+                  movingNote,
+                );
               }
             }
 
