@@ -84,8 +84,8 @@ export default function Editor({
     textColor = "inherit",
     fontFamily = "inherit",
     selectionBackground = "#3b82f6",
-    selectionOpacity = "50%",
-    selectionUnfocusedOpacity = "30%",
+    selectionOpacity = "30%",
+    selectionUnfocusedOpacity = "20%",
     selectionUnfocusedBackground = "#000",
     cursorColor = "black",
     cursorWidth = "1.2px",
@@ -142,19 +142,25 @@ export default function Editor({
       onChange={onChange}
       placeholder={placeholder}
       basicSetup={{
-        lineNumbers: false,
-        foldGutter: false,
-        dropCursor: false,
         allowMultipleSelections: false,
-        indentOnInput: false,
+        autocompletion: false,
+        bracketMatching: false,
+        completionKeymap: false,
+        crosshairCursor: false,
+        // TODO: why does the default caret color not follow the font color?
+        // drawSelection: false,
+        foldGutter: false,
+        foldKeymap: false,
         highlightActiveLine: false,
         highlightActiveLineGutter: false,
-        bracketMatching: false,
-        syntaxHighlighting: false,
         highlightSelectionMatches: false,
-        searchKeymap: false,
         highlightSpecialChars: false,
+        indentOnInput: false,
+        lineNumbers: false,
+        lintKeymap: false,
         rectangularSelection: false,
+        searchKeymap: false,
+        syntaxHighlighting: false,
       }}
     />
   );
